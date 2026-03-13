@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int            @id @default(autoincrement())
+  name          String
+  email         String         @unique
+  password      String
+  country       String
+  incomeBracket String         @map("income_bracket") // low, middle, high
+  transactions  Transaction[]
+  budgets       Budget[]
+  taxEstimates  TaxEstimate[]
+  reports       Report[]
+
+  @@map("users")
+}
+
+model Transaction {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  type      String   // income or expense
+  category  String
+  amount    Decimal
+  date      DateTime
+  description String?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("transactions")
+}
+
+model Budget {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  category  String
+  limit     Decimal
+  month     String   // Format: "YYYY-MM"
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("budgets")
+}
+
+model TaxEstimate {
+  id           Int      @id @default(autoincrement())
+  userId       Int      @map("user_id")
+  quarter      String   // Q1, Q2, Q3, Q4
+  year         Int
+  estimatedTax Decimal  @map("estimated_tax")
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("tax_estimates")
+}
+
+model Report {
+  id         Int      @id @default(autoincrement())
+  userId     Int      @map("user_id")
+  period     String
+  reportType String   @map("report_type")
+  filePath   String?  @map("file_path")
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("reports")
+}
