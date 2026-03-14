@@ -11,6 +11,8 @@ import {
     LogOut
 } from 'lucide-react';
 
+import ThemeSwitcher from './ThemeSwitcher';
+
 const navItems = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Transactions', href: '/transactions', icon: Receipt },
@@ -62,6 +64,10 @@ export default function Sidebar() {
                     );
                 })}
             </nav>
+
+            <div style={{ paddingBottom: '1rem', display: 'flex', justifyContent: 'center' }}>
+                <ThemeSwitcher />
+            </div>
 
             <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
                 <button

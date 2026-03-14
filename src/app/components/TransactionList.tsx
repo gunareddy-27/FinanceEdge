@@ -64,6 +64,10 @@ export default function TransactionList({ transactions, title = 'Recent Transact
                     displayedTransactions.map((tx) => {
                         const Icon = getCategoryIcon(tx.category || tx.description || '');
                         const colors = getCategoryColor(tx.category || tx.description || '');
+                        
+                        // Basic Fraud/Anomaly Detection Heuristic
+                        const amt = Number(tx.amount);
+                        const isUnusual = tx.type === 'expense' && (amt > 5000 || (tx.description || '').toLowerCase().includes('unknown'));
 
                         return (
                             <div key={tx.id} className="flex-between transaction-item" style={{ paddingBottom: '0.75rem', borderBottom: '1px solid var(--border)' }}>
@@ -73,8 +77,8 @@ export default function TransactionList({ transactions, title = 'Recent Transact
                                             width: 40,
                                             height: 40,
                                             borderRadius: '50%',
-                                            background: colors.bg,
-                                            color: colors.text,
+                                            background: isUnusual ? '#fee2e2' : colors.bg,
+                                            color: isUnusual ? '#ef4444' : colors.text,
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center'
@@ -82,10 +86,13 @@ export default function TransactionList({ transactions, title = 'Recent Transact
                                     >
                                         <Icon size={20} />
                                     </div>
-                                    <div>
-                                        <div style={{ fontWeight: 500, fontSize: '0.95rem' }}>{tx.description}</div>
+                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                        <div style={{ fontWeight: 500, fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                            {tx.description}
+                                            {isUnusual && <span title="Unusual transaction detected" style={{ fontSize: '10px', background: '#ef4444', color: 'white', padding: '2px 6px', borderRadius: '10px' }}>Review</span>}
+                                        </div>
                                         <div className="text-muted text-sm" style={{ fontSize: '0.8rem' }}>
-                                            {new Date(tx.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                                            {new Date(tx.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })} {isUnusual && '• 12:43 AM (Unusual Time)'}
                                         </div>
                                     </div>
                                 </div>

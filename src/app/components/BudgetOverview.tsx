@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Plus, Trash2, AlertTriangle } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Plus, Trash2, AlertTriangle, BellRing } from 'lucide-react';
 import { getBudgetsForMonth } from '@/app/actions/budget';
 import { setBudget, deleteBudget } from '@/app/actions/budget';
+import { useToast } from './ToastProvider';
 
 interface Budget {
     id: number;
@@ -17,6 +18,8 @@ export default function BudgetOverview() {
     const [budgets, setBudgets] = useState<Budget[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isAdding, setIsAdding] = useState(false);
+    const { showToast } = useToast();
+    const alertsShownRef = useRef(new Set<number>());
 
     // Form
     const [category, setCategory] = useState('');
@@ -34,6 +37,21 @@ export default function BudgetOverview() {
             const data = await getBudgetsForMonth(currentMonth);
             // Sort by progress desc (most critical first)
             setBudgets(data.sort((a, b) => (b.spent / b.limit) - (a.spent / a.limit)));
+            
+            // Smart Budget Alerts check
+            data.forEach(b => {
+                const progress = b.spent / b.limit;
+                if (!alertsShownRef.current.has(b.id)) {
+                    if (progress >= 1) {
+                        showToast(`⚠️ You have exceeded your ${b.category} budget!`, 'error');
+                        alertsShownRef.current.add(b.id);
+                    } else if (progress >= 0.9) {
+                        showToast(`⚠️ Note: ${b.category} spending reached ${(progress * 100).toFixed(0)}% of budget.`, 'error');
+                        alertsShownRef.current.add(b.id);
+                    }
+                }
+            });
+            
         } catch (error) {
             console.error(error);
         } finally {

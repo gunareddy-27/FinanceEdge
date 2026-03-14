@@ -1,6 +1,7 @@
 'use client';
 
-import { FileText, Download, Printer } from 'lucide-react';
+
+import { FileText, Printer } from 'lucide-react';
 import { useState } from 'react';
 import { generateReport } from '@/app/actions/report';
 import { useToast } from '@/app/components/ToastProvider';

@@ -1,0 +1,4 @@
+﻿src/app/components/AIChatbot.tsx(162,26): error TS2339: Property 'error' does not exist on type '{ message: any; }'.
+src/app/components/AIChatbot.tsx(163,40): error TS2339: Property 'error' does not exist on type '{ message: any; }'.
+src/app/components/AIChatbot.tsx(164,30): error TS2339: Property 'error' does not exist on type '{ message: any; }'.
+src/app/components/AIChatbot.tsx(404,60): error TS2353: Object literal may only specify known properties, and 'items' does not exist in type 'Properties<string | number, string & {}>'.

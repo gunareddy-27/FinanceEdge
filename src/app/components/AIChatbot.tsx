@@ -401,7 +401,7 @@ export default function AIChatbot() {
                             border: `2px dashed ${primaryColor}`,
                             margin: '10px 0'
                         }}>
-                            <div style={{ display: 'flex', items: 'center', gap: '8px', marginBottom: '12px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
                                 <Sparkles size={18} color={primaryColor} />
                                 <span style={{ fontWeight: '700', fontSize: '14px' }}>Unlock Advanced AI</span>
                             </div>

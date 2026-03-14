@@ -12,6 +12,11 @@ import BudgetOverview from '@/app/components/BudgetOverview';
 import ExportReportButton from '@/app/components/ExportReportButton';
 import SubscriptionManager from '@/app/components/SubscriptionManager';
 import HealthScore from '@/app/components/HealthScore';
+import Goals from '@/app/components/Goals';
+import ReceiptScanner from '@/app/components/ReceiptScanner';
+import VoiceExpenseEntry from '@/app/components/VoiceExpenseEntry';
+import FinancialCalendar from '@/app/components/FinancialCalendar';
+import CurrencySwitcher from '@/app/components/CurrencySwitcher';
 
 import {
     DollarSign,
@@ -99,6 +104,7 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
                     <p className="text-muted">Welcome back! Here's your financial summary.</p>
                 </div>
                 <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                    <CurrencySwitcher />
                     <ExportReportButton transactions={allTransactions} summary={summary} />
                     <button onClick={() => setExpenseModalOpen(true)} className="btn btn-secondary">Record Expense</button>
                     <button onClick={() => setIncomeModalOpen(true)} className="btn btn-primary">Record Income</button>
@@ -177,6 +183,7 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     <HealthScore summary={summary} />
                     <BudgetOverview />
+                    <FinancialCalendar />
                     <div className="card">
                         <h3 className="text-xl" style={{ marginBottom: '1rem' }}>Expense Breakdown</h3>
                         <ExpenseBreakdownChart transactions={recentTransactions} />
@@ -186,6 +193,7 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
                 {/* Column 3: Insights & Transactions */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     <SubscriptionManager />
+                    <Goals />
                     <AiInsights />
                     <TransactionList
                         transactions={recentTransactions}
@@ -257,7 +265,18 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
 
             {/* Record Expense Modal */}
             <Modal isOpen={isExpenseModalOpen} onClose={() => setExpenseModalOpen(false)} title="Record New Expense">
-                <form onSubmit={handleSaveExpense}>
+                <ReceiptScanner onScanComplete={(data) => {
+                    setExpDescription(data.merchant);
+                    if (data.amount) setExpAmount(data.amount.toString());
+                    if (data.date) setExpDate(data.date.toISOString().slice(0, 10));
+                }} />
+                <VoiceExpenseEntry onVoiceParsed={(data) => {
+                    setExpDescription(data.description);
+                    if (data.amount) setExpAmount(data.amount.toString());
+                    if (data.category) setExpCategory(data.category);
+                }} />
+                
+                <form onSubmit={handleSaveExpense} style={{ marginTop: '1rem' }}>
                     <div style={{ marginBottom: '1rem' }}>
                         <label className="label">Description</label>
                         <input

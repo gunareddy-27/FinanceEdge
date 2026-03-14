@@ -17,10 +17,14 @@ model User {
   password      String
   country       String
   incomeBracket String         @map("income_bracket") // low, middle, high
+  currency      String         @default("INR")
+  theme         String         @default("system") // light, dark, system, finance_green
   transactions  Transaction[]
   budgets       Budget[]
   taxEstimates  TaxEstimate[]
   reports       Report[]
+  subscriptions Subscription[]
+  goals         Goal[]
 
   @@map("users")
 }
@@ -70,4 +74,30 @@ model Report {
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("reports")
+}
+
+model Subscription {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  name      String
+  amount    Decimal
+  frequency String   // monthly, yearly
+  status    String   @default("active") // active, inactive
+  nextDate  DateTime?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions")
+}
+
+model Goal {
+  id           Int      @id @default(autoincrement())
+  userId       Int      @map("user_id")
+  name         String
+  targetAmount Decimal  @map("target_amount")
+  currentAmount Decimal @default(0) @map("current_amount")
+  deadline     DateTime
+  status       String   @default("active")
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("goals")
 }

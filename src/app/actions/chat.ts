@@ -83,7 +83,7 @@ ${savings > 0 ? "You're in the green! Nice work. 🌟" : "Looks like you're spen
 // -------------------------------------------------------------
 // Main Chat Function
 // -------------------------------------------------------------
-export async function chatWithAI(messages: Message[], providedKey?: string) {
+export async function chatWithAI(messages: Message[], providedKey?: string): Promise<{ message?: string; error?: string }> {
     const apiKey = providedKey || process.env.OPENAI_API_KEY;
 
     // Fetch User Context

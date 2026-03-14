@@ -151,17 +151,17 @@ export default function CashFlowForecast({ transactions }: { transactions: Trans
         <div className="card" style={{ padding: '1.5rem', marginTop: '2rem' }}>
             <div className="flex-between" style={{ marginBottom: '1rem' }}>
                 <div>
-                    <h3 className="text-xl font-bold">Cash Flow Forecast</h3>
-                    <p className="text-muted text-sm">AI prediction based on your last 30 days of activity.</p>
+                    <h3 className="text-xl font-bold">Predictive Expense Forecasting</h3>
+                    <p className="text-muted text-sm">Predict future expenses and savings.</p>
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                    <p className="text-sm text-muted">Projected Trend</p>
+                    <p className="text-sm text-muted">Next Month Expense Prediction</p>
                     <p style={{
                         fontSize: '1.25rem',
                         fontWeight: 'bold',
                         color: avgDailyChange >= 0 ? '#10b981' : '#ef4444'
                     }}>
-                        {avgDailyChange >= 0 ? '+' : ''}${Math.round(avgDailyChange * 30)} / mo
+                        {avgDailyChange >= 0 ? '+' : ''}₹{Math.round(Math.abs(avgDailyChange) * 30)}
                     </p>
                 </div>
             </div>

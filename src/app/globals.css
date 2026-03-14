@@ -3,13 +3,9 @@
 :root {
   /* Brand -- Indigo Palette */
   --primary: #6366f1;
-  /* Indigo 500 */
   --primary-hover: #4f46e5;
-  /* Indigo 600 */
   --primary-light: #e0e7ff;
-  /* Indigo 100 */
   --primary-dark: #3730a3;
-  /* Indigo 800 */
 
   /* Semantic Colors */
   --success-bg: #d1fae5;
@@ -21,14 +17,10 @@
 
   /* Neutral scale - Fintech Grey */
   --bg-body: #f8fafc;
-  /* Slate 50 */
   --bg-card: #ffffff;
   --text-main: #0f172a;
-  /* Slate 900 */
   --text-muted: #64748b;
-  /* Slate 500 */
   --border: #e2e8f0;
-  /* Slate 200 */
   --input-bg: #f8fafc;
 
   /* Shadows */
@@ -42,6 +34,41 @@
   --radius-sm: 8px;
   --header-height: 72px;
   --sidebar-width: 280px;
+}
+
+[data-theme="dark"] {
+  --primary: #818cf8;
+  --primary-hover: #6366f1;
+  --primary-light: #3730a3;
+  --primary-dark: #4f46e5;
+  
+  --bg-body: #0f172a;
+  --bg-card: #1e293b;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --border: #334155;
+  --input-bg: #0f172a;
+  
+  --success-bg: #064e3b;
+  --success-text: #34d399;
+  --danger-bg: #7f1d1d;
+  --danger-text: #f87171;
+  --warning-bg: #78350f;
+  --warning-text: #fbbf24;
+}
+
+[data-theme="finance_green"] {
+  --primary: #10b981;
+  --primary-hover: #059669;
+  --primary-light: #d1fae5;
+  --primary-dark: #047857;
+  
+  --bg-body: #f0fdf4;
+  --bg-card: #ffffff;
+  --text-main: #064e3b;
+  --text-muted: #166534;
+  --border: #bbf7d0;
+  --input-bg: #f8fafc;
 }
 
 * {

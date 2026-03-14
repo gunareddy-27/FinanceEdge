@@ -34,8 +34,13 @@ export default function AiInsights() {
                 <div style={{ display: 'flex', gap: '0.75rem', background: 'rgba(255,255,255,0.1)', padding: '0.75rem', borderRadius: '8px', backdropFilter: 'blur(4px)' }}>
                     <Lightbulb size={20} style={{ flexShrink: 0, marginTop: '2px', color: '#FEF08A' }} />
                     <div>
-                        <div style={{ fontWeight: 600, fontSize: '0.9rem', marginBottom: '0.25rem' }}>Tax Saving Tip</div>
-                        <p style={{ fontSize: '0.8rem', opacity: 0.9 }}>Did you know? Your home office deduction could save you ~$850 this quarter based on your expense patterns.</p>
+                        <div style={{ fontWeight: 600, fontSize: '0.9rem', marginBottom: '0.25rem' }}>Tax Optimization Tip</div>
+                        <p style={{ fontSize: '0.8rem', opacity: 0.9 }}>You can save <strong>₹15,000 tax</strong> by investing in Section 80C.</p>
+                        <ul style={{ fontSize: '0.75rem', margin: '4px 0 0 16px', opacity: 0.8 }}>
+                            <li>ELSS</li>
+                            <li>PPF</li>
+                            <li>NPS</li>
+                        </ul>
                     </div>
                 </div>
 
