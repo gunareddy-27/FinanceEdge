@@ -8,7 +8,8 @@ import {
     PieChart,
     Calculator,
     FileText,
-    LogOut
+    LogOut,
+    BrainCircuit
 } from 'lucide-react';
 
 import ThemeSwitcher from './ThemeSwitcher';
@@ -19,6 +20,7 @@ const navItems = [
     { name: 'Budgets', href: '/budgets', icon: PieChart },
     { name: 'Tax Estimator', href: '/tax-estimator', icon: Calculator },
     { name: 'Reports', href: '/reports', icon: FileText },
+    { name: 'AI Lab', href: '/ai-analytics', icon: BrainCircuit }
 ];
 
 export default function Sidebar() {

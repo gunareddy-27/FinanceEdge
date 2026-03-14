@@ -1,0 +1,6 @@
+transaction_id,user_id,date,amount,currency,merchant,description,main_category,sub_category,is_weekend
+001,U123,2023-10-01,150.00,INR,Uber,Uber Ride,Travel,Taxi,True
+002,U123,2023-10-02,450.00,INR,Zomato,Lunch Delivery,Food,Delivery,False
+003,U123,2023-10-03,12000.00,INR,Amazon,New Phone,Shopping,Electronics,False
+004,U123,2023-10-05,2500.00,INR,Reliance Fresh,Groceries,Food,Supermarket,False
+005,U123,2023-10-08,199.00,INR,Netflix,Monthly Sub,Entertainment,Streaming,True
