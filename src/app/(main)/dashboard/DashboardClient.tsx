@@ -17,6 +17,14 @@ import ReceiptScanner from '@/app/components/ReceiptScanner';
 import VoiceExpenseEntry from '@/app/components/VoiceExpenseEntry';
 import FinancialCalendar from '@/app/components/FinancialCalendar';
 import CurrencySwitcher from '@/app/components/CurrencySwitcher';
+import ExpenseSplitter from '@/app/components/ExpenseSplitter';
+import LocationExpenseTracker from '@/app/components/LocationExpenseTracker';
+import EmergencyFundTracker from '@/app/components/EmergencyFundTracker';
+import AutoSavingsSuggestion from '@/app/components/AutoSavingsSuggestion';
+import SmartSpendingLimits from '@/app/components/SmartSpendingLimits';
+import LifestyleAnalysis from '@/app/components/LifestyleAnalysis';
+import MilestoneTracker from '@/app/components/MilestoneTracker';
+import AdvancedSecurityDashboard from '@/app/components/AdvancedSecurityDashboard';
 
 import {
     DollarSign,
@@ -177,6 +185,8 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
                             <DashboardChart />
                         </div>
                     </div>
+                    <SmartSpendingLimits />
+                    <LifestyleAnalysis />
                 </div>
 
                 {/* Column 2: Health & Breakdown */}
@@ -188,12 +198,17 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
                         <h3 className="text-xl" style={{ marginBottom: '1rem' }}>Expense Breakdown</h3>
                         <ExpenseBreakdownChart transactions={recentTransactions} />
                     </div>
+                    <ExpenseSplitter />
+                    <LocationExpenseTracker />
                 </div>
 
                 {/* Column 3: Insights & Transactions */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     <SubscriptionManager />
                     <Goals />
+                    <EmergencyFundTracker monthlyExpenses={summary.expenses} />
+                    <MilestoneTracker />
+                    <AutoSavingsSuggestion />
                     <AiInsights />
                     <TransactionList
                         transactions={recentTransactions}
@@ -201,6 +216,11 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
                         title="Recent Activity"
                     />
                 </div>
+            </div>
+
+            {/* Advanced Security & Admin Features */}
+            <div style={{ marginTop: '2rem', marginBottom: '4rem' }}>
+                <AdvancedSecurityDashboard />
             </div>
 
             {/* Record Income Modal */}
