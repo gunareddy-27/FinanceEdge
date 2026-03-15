@@ -25,6 +25,12 @@ import SmartSpendingLimits from '@/app/components/SmartSpendingLimits';
 import LifestyleAnalysis from '@/app/components/LifestyleAnalysis';
 import MilestoneTracker from '@/app/components/MilestoneTracker';
 import AdvancedSecurityDashboard from '@/app/components/AdvancedSecurityDashboard';
+import AITransactionCategorizer from '@/app/components/AITransactionCategorizer';
+import AIFraudDetection from '@/app/components/AIFraudDetection';
+import AIInvestmentSuggestions from '@/app/components/AIInvestmentSuggestions';
+import AITaxAdvisor from '@/app/components/AITaxAdvisor';
+import AIRiskDetection from '@/app/components/AIRiskDetection';
+import AIBudgetRecommender from '@/app/components/AIBudgetRecommender';
 
 import {
     DollarSign,
@@ -187,6 +193,7 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
                     </div>
                     <SmartSpendingLimits />
                     <LifestyleAnalysis />
+                    <AITransactionCategorizer />
                 </div>
 
                 {/* Column 2: Health & Breakdown */}
@@ -200,6 +207,8 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
                     </div>
                     <ExpenseSplitter />
                     <LocationExpenseTracker />
+                    <AIBudgetRecommender />
+                    <AIFraudDetection />
                 </div>
 
                 {/* Column 3: Insights & Transactions */}
@@ -210,6 +219,9 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
                     <MilestoneTracker />
                     <AutoSavingsSuggestion />
                     <AiInsights />
+                    <AIRiskDetection />
+                    <AIInvestmentSuggestions />
+                    <AITaxAdvisor />
                     <TransactionList
                         transactions={recentTransactions}
                         limit={10}
