@@ -24,7 +24,7 @@ export async function getRecurringSubscriptions(): Promise<Subscription[]> {
     // 2. Group by Description (normalization: lowercase, trim)
     const groups: { [key: string]: typeof expenses } = {};
 
-    expenses.forEach(exp => {
+    (expenses as any[]).forEach((exp: any) => {
         const key = (exp.description || '').toLowerCase().trim();
         if (!key) return;
         if (!groups[key]) groups[key] = [];
@@ -43,7 +43,7 @@ export async function getRecurringSubscriptions(): Promise<Subscription[]> {
         let lastDate = new Date(txs[0].date);
 
         // Sort explicitly by date just in case
-        const sortedTxs = txs.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        const sortedTxs = txs.sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
         const intervals: number[] = [];
 
         for (let i = 1; i < sortedTxs.length; i++) {
@@ -56,7 +56,7 @@ export async function getRecurringSubscriptions(): Promise<Subscription[]> {
         }
 
         // Calculate average interval
-        const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+        const avgInterval = (intervals as number[]).reduce((a: number, b: number) => a + b, 0) / intervals.length;
 
         let frequency: 'Monthly' | 'Weekly' | 'Irregular' = 'Irregular';
 
@@ -70,9 +70,9 @@ export async function getRecurringSubscriptions(): Promise<Subscription[]> {
         }
 
         // Also check if amount is consistent (variance < 10%)
-        const amounts = sortedTxs.map(t => Number(t.amount));
-        const avgAmount = amounts.reduce((a, b) => a + b, 0) / amounts.length;
-        const isAmountConsistent = amounts.every(a => Math.abs(a - avgAmount) / avgAmount < 0.1);
+        const amounts = sortedTxs.map((t: any) => Number(t.amount));
+        const avgAmount = amounts.reduce((a: number, b: number) => a + b, 0) / amounts.length;
+        const isAmountConsistent = amounts.every((a: number) => Math.abs(a - avgAmount) / avgAmount < 0.1);
 
         if (isRecurring && isAmountConsistent) {
             // Calculate Next Payment
@@ -91,5 +91,5 @@ export async function getRecurringSubscriptions(): Promise<Subscription[]> {
     });
 
     // Sort by next payment date
-    return subscriptions.sort((a, b) => new Date(a.nextPaymentDate).getTime() - new Date(b.nextPaymentDate).getTime());
+    return (subscriptions as Subscription[]).sort((a: any, b: any) => new Date(a.nextPaymentDate).getTime() - new Date(b.nextPaymentDate).getTime());
 }

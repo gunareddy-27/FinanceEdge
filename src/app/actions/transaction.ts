@@ -31,7 +31,7 @@ export async function getTransactions() {
         take: 10,
     });
 
-    return transactions.map(t => ({
+    return (transactions as any[]).map((t: any) => ({
         ...t,
         amount: Number(t.amount)
     }));
@@ -45,7 +45,7 @@ export async function getAllTransactions() {
         orderBy: { date: 'asc' }, // Ascending for time-series analysis
     });
 
-    return transactions.map(t => ({
+    return (transactions as any[]).map((t: any) => ({
         ...t,
         amount: Number(t.amount)
     }));
@@ -58,13 +58,13 @@ export async function getFinancialSummary() {
         where: { userId },
     });
 
-    const income = transactions
-        .filter(t => t.type === 'income')
-        .reduce((sum, t) => sum + Number(t.amount), 0);
+    const income = (transactions as any[])
+        .filter((t: any) => t.type === 'income')
+        .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
 
-    const expenses = transactions
-        .filter(t => t.type === 'expense')
-        .reduce((sum, t) => sum + Number(t.amount), 0);
+    const expenses = (transactions as any[])
+        .filter((t: any) => t.type === 'expense')
+        .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
 
     return { income, expenses };
 }

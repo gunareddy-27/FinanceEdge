@@ -33,8 +33,8 @@ export async function getBudgetsForMonth(month: string) {
     });
 
     // 3. Combine budget limit with actual spending
-    const budgetData = budgets.map(b => {
-        const spent = expenses.find(e => e.category === b.category)?._sum.amount || 0;
+    const budgetData = (budgets as any[]).map((b: any) => {
+        const spent = expenses.find((e: any) => e.category === b.category)?._sum.amount || 0;
         return {
             id: b.id,
             category: b.category,

@@ -28,7 +28,7 @@ export async function getGoals() {
         orderBy: { deadline: 'asc' },
     });
 
-    return goals.map(g => ({
+    return (goals as any[]).map((g: any) => ({
         ...g,
         targetAmount: Number(g.targetAmount),
         currentAmount: Number(g.currentAmount),
