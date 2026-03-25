@@ -83,29 +83,3 @@ export async function deleteBudget(id: number) {
         revalidatePath('/dashboard');
     }
 }
-
-export async function applySelfHealingBudget() {
-    const userId = await getUserId();
-    const month = new Date().toISOString().slice(0, 7);
-
-    // 1. Find highest spending category this month
-    const summary = await prisma.transaction.groupBy({
-        by: ['category'],
-        where: { userId, type: 'expense', date: { gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1) } },
-        _sum: { amount: true }
-    });
-
-    if (summary.length === 0) return { applied: false };
-
-    const topCategory = summary.sort((a: any, b: any) => Number(b._sum.amount) - Number(a._sum.amount))[0];
-    const category = topCategory.category;
-    const currentSpend = Number(topCategory._sum.amount);
-
-    // 2. Set an aggressive budget (e.g., 80% of current spend to cap it)
-    const newLimit = Math.round(currentSpend * 0.8);
-    
-    await setBudget(category, newLimit, month);
-
-    revalidatePath('/dashboard');
-    return { applied: true, category, newLimit };
-}

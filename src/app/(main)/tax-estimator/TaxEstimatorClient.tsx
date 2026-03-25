@@ -11,10 +11,10 @@ export default function TaxEstimatorClient({ initialResult }: { initialResult?: 
     const [result, setResult] = useState<any>(initialResult || null);
 
     const [formData, setFormData] = useState({
-        income: '85000',
-        deductions: '12500',
-        filingStatus: 'Single',
-        paidQ1: '2800'
+        income: '1200000',
+        deductions: '150000',
+        filingStatus: 'Individual',
+        paidQ1: '25000'
     });
 
     const handleCalculate = async () => {
@@ -57,9 +57,8 @@ export default function TaxEstimatorClient({ initialResult }: { initialResult?: 
                     <div style={{ marginBottom: '1.5rem' }}>
                         <label className="label">Country / Region</label>
                         <select className="input">
+                            <option>India</option>
                             <option>United States</option>
-                            <option>Canada</option>
-                            <option>United Kingdom</option>
                         </select>
                     </div>
 
@@ -70,9 +69,9 @@ export default function TaxEstimatorClient({ initialResult }: { initialResult?: 
                             value={formData.filingStatus}
                             onChange={(e) => setFormData({ ...formData, filingStatus: e.target.value })}
                         >
-                            <option>Single</option>
-                            <option>Married Filing Jointly</option>
-                            <option>Head of Household</option>
+                            <option>Individual</option>
+                            <option>HUF (Hindu Undivided Family)</option>
+                            <option>Firm / Company</option>
                         </select>
                     </div>
 
@@ -87,7 +86,7 @@ export default function TaxEstimatorClient({ initialResult }: { initialResult?: 
                     </div>
 
                     <div style={{ marginBottom: '1.5rem' }}>
-                        <label className="label">Est. Annual Deductions</label>
+                        <label className="label">Est. Annual Income (₹)</label>
                         <input
                             type="number"
                             className="input"
@@ -107,7 +106,7 @@ export default function TaxEstimatorClient({ initialResult }: { initialResult?: 
                     <div className="card" style={{ background: 'linear-gradient(135deg, #4F46E5 0%, #4338CA 100%)', color: 'white', border: 'none' }}>
                         <h3 className="text-xl" style={{ marginBottom: '0.5rem', opacity: 0.9 }}>Estimated Tax Due (Q2)</h3>
                         <div style={{ fontSize: '2.5rem', fontWeight: 700, marginBottom: '1rem' }}>
-                            ${result ? result.q2.toFixed(2) : '3,250.00'}
+                            ₹{result ? result.q2.toLocaleString() : '85,000'}
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', opacity: 0.9 }}>
                             <Calendar size={16} />
@@ -125,9 +124,9 @@ export default function TaxEstimatorClient({ initialResult }: { initialResult?: 
                                     <div style={{ fontWeight: 500 }}>Q1 (Jan - Mar)</div>
                                     <div className="text-muted text-sm">Paid</div>
                                 </div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <div style={{ display: 'center', alignItems: 'center', gap: '0.5rem' }}>
                                     <CheckCircle size={16} className="text-success" />
-                                    <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>${formData.paidQ1}</span>
+                                    <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>₹{Number(formData.paidQ1).toLocaleString()}</span>
                                 </div>
                             </div>
                             <div style={{ borderBottom: '1px solid var(--border)' }}></div>
@@ -137,7 +136,7 @@ export default function TaxEstimatorClient({ initialResult }: { initialResult?: 
                                     <div style={{ fontWeight: 500 }}>Q2 (Apr - Jun)</div>
                                     <div className="text-muted text-sm">Upcoming</div>
                                 </div>
-                                <div style={{ fontWeight: 600 }}>${result ? result.q2.toFixed(2) : '3,250.00'}</div>
+                                <div style={{ fontWeight: 600 }}>₹{result ? result.q2.toLocaleString() : '85,000'}</div>
                             </div>
                             <div style={{ borderBottom: '1px solid var(--border)' }}></div>
 
@@ -146,7 +145,7 @@ export default function TaxEstimatorClient({ initialResult }: { initialResult?: 
                                     <div style={{ fontWeight: 500 }}>Q3 (Jul - Sep)</div>
                                     <div className="text-muted text-sm">Projected</div>
                                 </div>
-                                <div style={{ fontWeight: 600, color: 'var(--text-muted)' }}>${result ? result.q3.toFixed(2) : '3,250.00'}</div>
+                                <div style={{ fontWeight: 600, color: 'var(--text-muted)' }}>₹{result ? result.q3.toLocaleString() : '85,000'}</div>
                             </div>
                             <div style={{ borderBottom: '1px solid var(--border)' }}></div>
                         </div>

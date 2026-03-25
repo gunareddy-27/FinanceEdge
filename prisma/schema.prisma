@@ -40,6 +40,8 @@ model Transaction {
   description String?
   voiceNotes  String?  @map("voice_notes")
   attachmentUrl String?  @map("attachment_url")
+  fromDest    String?  @map("from_dest")
+  toDest      String?  @map("to_dest")
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("transactions")

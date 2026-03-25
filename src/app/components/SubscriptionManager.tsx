@@ -93,7 +93,7 @@ export default function SubscriptionManager() {
 
                             <div style={{ textAlign: 'right' }}>
                                 <p style={{ fontWeight: 700, fontSize: '15px', color: 'var(--text-main)', margin: 0 }}>
-                                    ${Number(sub.amount).toFixed(2)}
+                                    ₹{Number(sub.amount).toLocaleString()}
                                 </p>
                                 <p style={{
                                     fontSize: '12px',

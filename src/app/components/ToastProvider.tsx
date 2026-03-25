@@ -21,7 +21,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     const [toasts, setToasts] = useState<Toast[]>([]);
 
     const showToast = (message: string, type: ToastType) => {
-        const id = Date.now();
+        const id = Date.now() + Math.random(); // Use random to prevent duplicates in same ms
         setToasts((prev) => [...prev, { id, message, type }]);
 
         // Auto dismiss

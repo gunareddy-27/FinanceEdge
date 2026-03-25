@@ -56,7 +56,13 @@ export async function getLatestTaxEstimate() {
         where: { userId },
         orderBy: { year: 'desc' }
     });
-    return estimate;
+    
+    if (!estimate) return null;
+    
+    return {
+        ...estimate,
+        estimatedTax: Number(estimate.estimatedTax)
+    };
 }
 
 export async function autoEstimateQuarterlyTax() {

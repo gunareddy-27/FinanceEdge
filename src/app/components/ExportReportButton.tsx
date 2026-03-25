@@ -53,10 +53,10 @@ export default function ExportReportButton({ transactions, summary }: ExportRepo
                 startY: 55,
                 head: [['Metric', 'Amount']],
                 body: [
-                    ['Total Income', `$${summary.income.toFixed(2)}`],
-                    ['Total Expenses', `$${summary.expenses.toFixed(2)}`],
-                    ['Net Income', `$${netIncome.toFixed(2)}`],
-                    ['Estimated Tax (25%)', `$${(summary.income * 0.25).toFixed(2)}`]
+                    ['Total Income', `₹${summary.income.toLocaleString()}`],
+                    ['Total Expenses', `₹${summary.expenses.toLocaleString()}`],
+                    ['Net Income', `₹${netIncome.toLocaleString()}`],
+                    ['Estimated Tax (25%)', `₹${(summary.income * 0.25).toLocaleString()}`]
                 ],
                 theme: 'grid',
                 headStyles: { fillColor: [99, 102, 241] },
@@ -76,7 +76,7 @@ export default function ExportReportButton({ transactions, summary }: ExportRepo
                     t.description || 'No description',
                     t.category || 'Uncategorized',
                     t.type.toUpperCase(),
-                    `$${Number(t.amount).toFixed(2)}`
+                    `₹${Number(t.amount).toLocaleString()}`
                 ]);
 
                 autoTable(doc, {

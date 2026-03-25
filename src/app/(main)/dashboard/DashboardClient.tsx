@@ -36,18 +36,24 @@ import {
     Receipt,
     Wallet,
     PiggyBank,
-    ShieldCheck,
     Users,
     Paperclip,
-    Mic
+    Mic,
+    MapPin
 } from 'lucide-react';
 import { addTransaction } from '@/app/actions/transaction';
 import { getLatestTaxEstimate, autoEstimateQuarterlyTax } from '@/app/actions/tax';
 import { autoArchiveMonthReport } from '@/app/actions/report';
-import { applySelfHealingBudget } from '@/app/actions/budget';
 import ThemeSwitcher from '@/app/components/ThemeSwitcher';
 import FinancialCalculators from '@/app/components/FinancialCalculators';
 import FloatingCalculator from '@/app/components/FloatingCalculator';
+import { useToast } from '@/app/components/ToastProvider';
+import ProAnalytics from '@/app/components/ProAnalytics';
+import AIHabitCorrection from '@/app/components/AIHabitCorrection';
+import BottomNav from '@/app/components/BottomNav';
+import FloatingActionButton from '@/app/components/FloatingActionButton';
+import InsightFeed from '@/app/components/InsightFeed';
+import { LayoutGrid, Zap, Sparkles, TrendingUp, TrendingDown, Clock, ShieldCheck } from 'lucide-react';
 
 interface Transaction {
     id: number;
@@ -62,9 +68,12 @@ interface DashboardClientProps {
     summary: { income: number; expenses: number };
     recentTransactions: Transaction[];
     allTransactions: Transaction[];
+    budgets: any[];
 }
 
-export default function DashboardClient({ summary, recentTransactions, allTransactions }: DashboardClientProps) {
+export default function DashboardClient({ summary, recentTransactions, allTransactions, budgets }: DashboardClientProps) {
+    const { showToast } = useToast();
+    const [isProMode, setIsProMode] = useState(false);
     const [isIncomeModalOpen, setIncomeModalOpen] = useState(false);
     const [isExpenseModalOpen, setExpenseModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -86,6 +95,8 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
     const [expDate, setExpDate] = useState(new Date().toISOString().slice(0, 10));
     const [expVoice, setExpVoice] = useState('');
     const [expAttachment, setExpAttachment] = useState('');
+    const [expFrom, setExpFrom] = useState('');
+    const [expTo, setExpTo] = useState('');
 
     // Automation States
     const [taxSuggestion, setTaxSuggestion] = useState<{ quarter: string; amount: number } | null>(null);
@@ -117,12 +128,6 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
                     setAutomationLogs(prev => [...prev, `Auto-Archived: ${res.period} report saved.`]);
                 }
             }
-            if (summary.expenses > summary.income * 0.9 && summary.income > 0) {
-                const heal = await applySelfHealingBudget();
-                if (heal.applied) {
-                    setAutomationLogs(prev => [...prev, `Self-healing: Capped ${heal.category} budget.`]);
-                }
-            }
         };
         runAutomations();
     }, [allTransactions, summary]);
@@ -139,15 +144,18 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
 
     const handleSaveIncome = async (e: React.FormEvent) => {
         e.preventDefault();
+        if(!confirm("Are you sure you want to add this income?")) return;
         setLoading(true);
         await addTransaction({ description, amount: Number(amount), type: 'income', category, date });
         setLoading(false);
         setIncomeModalOpen(false);
+        showToast("Income added successfully!", "success");
         setDescription(''); setAmount('');
     };
 
     const handleSaveExpense = async (e: React.FormEvent) => {
         e.preventDefault();
+        if(!confirm("Are you sure you want to save this expense?")) return;
         setLoading(true);
         await addTransaction({
             description: expDescription,
@@ -156,11 +164,14 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
             category: expCategory,
             date: expDate,
             voiceNotes: expVoice,
-            attachmentUrl: expAttachment
+            attachmentUrl: expAttachment,
+            fromDest: expFrom,
+            toDest: expTo
         });
         setLoading(false);
         setExpenseModalOpen(false);
-        setExpDescription(''); setExpAmount(''); setExpVoice(''); setExpAttachment('');
+        showToast(`${expCategory} expense recorded!`, "success");
+        setExpDescription(''); setExpAmount(''); setExpVoice(''); setExpAttachment(''); setExpFrom(''); setExpTo('');
     };
 
     const estTax = summary.income * 0.25;
@@ -168,35 +179,106 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
 
     return (
         <div style={{ padding: '2rem', maxWidth: '1600px', margin: '0 auto' }}>
-            <header style={{ marginBottom: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem' }}>
+             <header style={{ 
+                marginBottom: '2.5rem', 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center', 
+                flexWrap: 'wrap', 
+                gap: '1.5rem',
+                background: 'rgba(255, 255, 255, 0.4)',
+                backdropFilter: 'blur(20px)',
+                padding: '1.25rem',
+                borderRadius: '24px',
+                border: '1px solid rgba(255,255,255,0.6)',
+                boxShadow: '0 8px 32px -4px rgba(0,0,0,0.03)'
+             }}>
                 <div>
-                    <h1 className="text-3xl font-extrabold" style={{ marginBottom: '0.25rem' }}>TaxPal Dashboard</h1>
-                    <p className="text-muted">High-precision financial automation actively running.</p>
+                    <h1 className="text-4xl font-black" style={{ 
+                        marginBottom: '0.25rem', 
+                        background: 'linear-gradient(to right, #1e293b, #4338ca)', 
+                        WebkitBackgroundClip: 'text', 
+                        WebkitTextFillColor: 'transparent',
+                        letterSpacing: '-0.02em'
+                    }}>
+                        TaxPal Prime
+                    </h1>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981', boxShadow: '0 0 10px #10b981' }}></div>
+                        <p className="text-muted font-semibold text-sm">Active Economic Monitoring</p>
+                    </div>
                 </div>
                 <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                    <button 
+                        onClick={() => setIsProMode(!isProMode)} 
+                        className={`btn ${isProMode ? 'btn-danger' : 'btn-secondary'}`}
+                        style={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: '8px', 
+                            border: isProMode ? '1px solid #ef4444' : '1px solid rgba(226, 232, 240, 0.8)', 
+                            padding: '10px 20px', 
+                            borderRadius: '16px',
+                            fontWeight: 700,
+                            letterSpacing: '0.01em',
+                            boxShadow: isProMode ? '0 4px 12px rgba(239, 68, 68, 0.2)' : 'none'
+                        }}
+                    >
+                        {isProMode ? <LayoutGrid size={18} /> : <Zap size={18} />}
+                        {isProMode ? 'Lite Mode' : 'Pro Engine'}
+                    </button>
                     <ThemeSwitcher />
                     <CurrencySwitcher />
                     <ExportReportButton transactions={allTransactions} summary={summary} />
-                    <button onClick={() => setExpenseModalOpen(true)} className="btn btn-secondary shadow-sm">Record Expense</button>
-                    <button onClick={() => setIncomeModalOpen(true)} className="btn btn-primary shadow-md">Add Income</button>
                 </div>
             </header>
 
-            {/* Stats Row */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
-                <StatCard title="Total Earnings" value={`₹${summary.income.toLocaleString()}`} icon={DollarSign} colorTheme="primary" />
-                <StatCard title="Total Spent" value={`₹${summary.expenses.toLocaleString()}`} icon={Receipt} colorTheme="danger" />
-                <StatCard title="Estimated Tax" value={`₹${estTax.toLocaleString()}`} icon={Wallet} colorTheme="warning" />
-                <StatCard title="Savings Power" value={`${savingsRate}%`} icon={PiggyBank} colorTheme="success" />
-                
-                <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: 'var(--bg-card)' }}>
-                    <div style={{ padding: '0.75rem', borderRadius: '14px', background: 'var(--primary-light)', color: 'var(--primary)' }}><Users size={20}/></div>
-                    <div>
-                        <p className="text-xs text-muted font-bold uppercase tracking-wider">Joint Wallet</p>
-                        <p className="font-bold text-success text-sm">Private Connection</p>
-                    </div>
-                </div>
+            {/* AI Insight Feed (Adaptive UI) */}
+            <InsightFeed income={summary.income} expenses={summary.expenses} />
+
+            {/* AI Habit Correction Engine (Active Monitor) */}
+            <AIHabitCorrection 
+                transactions={allTransactions} 
+                currentBudgets={budgets} 
+            />
+
+            {/* Stats Row with Adaptive UI */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
+                <StatCard 
+                    title="Total Liquidity" 
+                    value={`₹${summary.income.toLocaleString()}`} 
+                    icon={TrendingUp} 
+                    colorTheme="primary"
+                    trend={{ value: summary.income > summary.expenses ? "+12%" : "-5%", direction: summary.income > summary.expenses ? 'up' : 'down' }}
+                />
+                <StatCard 
+                    title="Economic Outflow" 
+                    value={`₹${summary.expenses.toLocaleString()}`} 
+                    icon={TrendingDown} 
+                    colorTheme={summary.expenses > (summary.income * 0.7) ? "danger" : "primary"}
+                    trend={{ value: summary.expenses > (summary.income * 0.8) ? "Critical" : "Stable", direction: summary.expenses > (summary.income * 0.8) ? 'down' : 'neutral' }}
+                />
+                <StatCard 
+                    title="Tax Reserve" 
+                    value={`₹${estTax.toLocaleString()}`} 
+                    icon={ShieldCheck} 
+                    colorTheme="warning" 
+                />
+                <StatCard 
+                    title="Saving Power" 
+                    value={`${savingsRate}%`} 
+                    icon={Clock} 
+                    colorTheme={savingsRate > 30 ? "success" : (savingsRate < 10 ? "danger" : "primary")} 
+                    trend={{ value: savingsRate > 50 ? "Elite Elite" : "Active", direction: savingsRate > 30 ? 'up' : 'neutral' }}
+                />
             </div>
+            
+            {/* Pro Analytics Engine Toggle Section */}
+            {isProMode && (
+                <div style={{ marginBottom: '2.5rem' }}>
+                    <ProAnalytics transactions={allTransactions} />
+                </div>
+            )}
 
             {/* Automation Alerts */}
             {(automationLogs.length > 0 || taxSuggestion) && (
@@ -217,7 +299,6 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
                 </div>
             )}
 
-            {/* Main Interactive Grid */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '2rem', alignItems: 'start' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                     <DashboardChart transactions={recentTransactions} />
@@ -234,9 +315,6 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
                 </div>
             </div>
 
-            <FloatingCalculator />
-
-            {/* Modals */}
             <Modal isOpen={isIncomeModalOpen} onClose={() => setIncomeModalOpen(false)} title="Add Income">
                 <form onSubmit={handleSaveIncome} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     <input className="input" placeholder="Source Name" value={description} onChange={e => setDescription(e.target.value)} required />
@@ -251,7 +329,13 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
 
             <Modal isOpen={isExpenseModalOpen} onClose={() => setExpenseModalOpen(false)} title="Record Expense">
                 <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
-                    <div style={{ flex: 1 }}><ReceiptScanner onScanComplete={async (d) => { /* logic here */ }} /></div>
+                    <div style={{ flex: 1 }}>
+                        <ReceiptScanner onScanComplete={(d) => { 
+                            setExpDescription(d.merchant); 
+                            if(d.amount) setExpAmount(d.amount.toString()); 
+                            if(d.date) setExpDate(d.date.toISOString().split('T')[0]);
+                        }} />
+                    </div>
                     <div style={{ flex: 1 }}><VoiceExpenseEntry onVoiceParsed={d => { setExpDescription(d.description); if(d.amount) setExpAmount(d.amount.toString()); }} /></div>
                 </div>
                 <form onSubmit={handleSaveExpense} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -259,9 +343,23 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                         <input className="input" type="number" placeholder="Amount (₹)" value={expAmount} onChange={e => setExpAmount(e.target.value)} required />
                         <select className="input" value={expCategory} onChange={e => setExpCategory(e.target.value)}>
-                            <option>Food</option><option>Transport</option><option>Business</option><option>Software</option><option>Taxes</option>
+                            <option>Food</option><option>Transport</option><option>Business</option><option>Software</option><option>Taxes</option><option>Travel</option><option>Others</option>
                         </select>
                     </div>
+
+                    {(expCategory === 'Travel' || expCategory === 'Transport') && (
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', background: '#f8fafc', padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                            <div style={{ position: 'relative' }}>
+                                <MapPin size={14} style={{ position: 'absolute', right: '12px', top: '14px', color: '#10b981' }} />
+                                <input className="input" placeholder="Starting point (Address)" value={expFrom} onChange={e => setExpFrom(e.target.value)} required />
+                            </div>
+                            <div style={{ position: 'relative' }}>
+                                <MapPin size={14} style={{ position: 'absolute', right: '12px', top: '14px', color: '#ef4444' }} />
+                                <input className="input" placeholder="Drop point (City/Loc)" value={expTo} onChange={e => setExpTo(e.target.value)} required />
+                            </div>
+                        </div>
+                    )}
+
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                         <div style={{ position: 'relative' }}>
                             <Mic size={14} style={{ position: 'absolute', right: '12px', top: '14px', color: '#94a3b8' }} />
@@ -273,9 +371,20 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
                         </div>
                     </div>
                     <input className="input" type="date" value={expDate} onChange={e => setExpDate(e.target.value)} />
-                    <button type="submit" className="btn btn-danger" disabled={loading}>{loading ? 'Logging Expense...' : 'Save Record'}</button>
+                    <button type="submit" className="btn btn-danger" disabled={loading}>{loading ? 'Logging Expense...' : 'Confirm Save Record'}</button>
                 </form>
             </Modal>
+
+            <div style={{ height: '100px' }} />
+
+            <FloatingActionButton 
+                onAddExpense={() => setExpenseModalOpen(true)} 
+                onAddIncome={() => setIncomeModalOpen(true)} 
+                onScanReceipt={() => setExpenseModalOpen(true)} 
+            />
+            
+            <BottomNav />
+            <FloatingCalculator />
         </div>
     );
 }

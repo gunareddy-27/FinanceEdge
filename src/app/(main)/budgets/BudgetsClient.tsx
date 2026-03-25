@@ -60,7 +60,7 @@ export default function BudgetsClient({ budgets }: { budgets: Budget[] }) {
                             <div key={budget.id} className="card">
                                 <div className="flex-between" style={{ marginBottom: '1rem' }}>
                                     <h3 className="text-xl">{budget.category}</h3>
-                                    <span className="text-muted text-sm">${used.toLocaleString()} / ${limit.toLocaleString()}</span>
+                                    <span className="text-muted text-sm">₹{used.toLocaleString()} / ₹{limit.toLocaleString()}</span>
                                 </div>
 
                                 <div style={{ height: '8px', width: '100%', background: '#F3F4F6', borderRadius: '4px', marginBottom: '1rem', overflow: 'hidden' }}>
@@ -74,7 +74,7 @@ export default function BudgetsClient({ budgets }: { budgets: Budget[] }) {
 
                                 <div className="flex-between text-sm">
                                     <span className="text-muted">{percent}% used</span>
-                                    <span className="text-muted">${(limit - used).toLocaleString()} remaining</span>
+                                    <span className="text-muted">₹{(limit - used).toLocaleString()} remaining</span>
                                 </div>
 
                                 <div style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid var(--border)', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
@@ -104,7 +104,7 @@ export default function BudgetsClient({ budgets }: { budgets: Budget[] }) {
                                 />
                             </div>
                             <div style={{ marginBottom: '1.5rem' }}>
-                                <label className="label">Monthly Limit ($)</label>
+                                <label className="label">Monthly Limit (₹)</label>
                                 <input
                                     type="number"
                                     required

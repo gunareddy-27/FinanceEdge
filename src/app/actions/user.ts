@@ -13,7 +13,7 @@ export async function getUserId() {
     if (!user) {
         user = await prisma.user.create({
             data: {
-                name: 'Alex Morgan',
+                name: 'Anshul',
                 email: email,
                 password: 'hashed_password_placeholder', // In real app, hash this
                 country: 'United States',

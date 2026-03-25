@@ -10,14 +10,11 @@ import {
     ShoppingBag,
     Utensils,
     Globe,
-    CreditCard
+    CreditCard,
+    MapPin,
+    ArrowRight,
+    CalendarDays
 } from 'lucide-react';
-
-interface TransportInfo {
-    start: string;
-    end: string;
-    price: number;
-}
 
 interface Transaction {
     id: number;
@@ -26,7 +23,8 @@ interface Transaction {
     date: Date | string;
     type: string;
     category?: string | null;
-    transport?: TransportInfo;
+    fromDest?: string | null;
+    toDest?: string | null;
 }
 
 interface TransactionListProps {
@@ -42,7 +40,7 @@ const getCategoryIcon = (category: string = '') => {
     if (cat.includes('business') || cat.includes('office')) return Building2;
     if (cat.includes('meal') || cat.includes('food')) return Coffee;
     if (cat.includes('software') || cat.includes('hosting')) return Laptop;
-    if (cat.includes('travel')) return Plane;
+    if (cat.includes('travel') || cat.includes('transport')) return Plane;
     if (cat.includes('shop')) return ShoppingBag;
     if (cat.includes('dining')) return Utensils;
     if (cat.includes('web')) return Globe;
@@ -55,82 +53,136 @@ const getCategoryColor = (category: string = '') => {
     if (cat.includes('business') || cat.includes('office')) return { bg: '#E0E7FF', text: '#3730A3' }; // Indigo
     if (cat.includes('meal')) return { bg: '#FEF3C7', text: '#92400E' }; // Amber
     if (cat.includes('software')) return { bg: '#FEE2E2', text: '#991B1B' }; // Red
+    if (cat.includes('travel') || cat.includes('transport')) return { bg: '#E0F2FE', text: '#0369A1' }; // Blue
     return { bg: '#F1F5F9', text: '#475569' }; // Slate
 };
 
-export default function TransactionList({ transactions, title = 'Recent Transactions', limit, showViewAll = true }: TransactionListProps) {
-    const displayedTransactions = limit ? transactions.slice(0, limit) : transactions;
+export default function TransactionList({ transactions, title = 'Activity Timeline', limit, showViewAll = true }: TransactionListProps) {
+    const sorted = [...transactions].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    const displayedTransactions = limit ? sorted.slice(0, limit) : sorted;
+
+    // Grouping by Date
+    const groups: Record<string, Transaction[]> = {};
+    displayedTransactions.forEach(tx => {
+        const dateStr = new Date(tx.date).toLocaleDateString(undefined, { 
+            weekday: 'long', 
+            day: 'numeric', 
+            month: 'long' 
+        });
+        if (!groups[dateStr]) groups[dateStr] = [];
+        groups[dateStr].push(tx);
+    });
 
     return (
-        <div className="card">
-            <h3 className="text-xl" style={{ marginBottom: '1.25rem' }}>{title}</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {displayedTransactions.length === 0 ? (
-                    <div className="text-muted text-sm text-center py-4">No transactions found.</div>
-                ) : (
-                    displayedTransactions.map((tx) => {
-                        const Icon = getCategoryIcon(tx.category || tx.description || '');
-                        const colors = getCategoryColor(tx.category || tx.description || '');
-                        
-                        // Basic Fraud/Anomaly Detection Heuristic
-                        const amt = Number(tx.amount);
-                        const isUnusual = tx.type === 'expense' && (amt > 5000 || (tx.description || '').toLowerCase().includes('unknown'));
+        <div className="card timeline-container" style={{ padding: '1.5rem' }}>
+            <div className="flex-between" style={{ marginBottom: '1.5rem' }}>
+                <h3 className="text-xl font-bold flex items-center gap-2">
+                    <CalendarDays size={20} className="text-primary" />
+                    {title}
+                </h3>
+            </div>
 
-                        return (
-                            <div key={tx.id} className="flex-between transaction-item" style={{ paddingBottom: '0.75rem', borderBottom: '1px solid var(--border)' }}>
-                                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                                    <div
-                                        style={{
-                                            width: 40,
-                                            height: 40,
-                                            borderRadius: '50%',
-                                            background: isUnusual ? '#fee2e2' : colors.bg,
-                                            color: isUnusual ? '#ef4444' : colors.text,
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center'
-                                        }}
-                                    >
-                                        <Icon size={20} />
-                                    </div>
-                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                        <div style={{ fontWeight: 500, fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                            {tx.description}
-                                            {isUnusual && <span title="Unusual transaction detected" style={{ fontSize: '10px', background: '#ef4444', color: 'white', padding: '2px 6px', borderRadius: '10px' }}>Review</span>}
-{tx.transport && (
-  <div style={{ fontSize: '0.75rem', color: '#555', marginTop: '4px' }}>
-    {tx.transport.start} → {tx.transport.end} • ${tx.transport.price.toFixed(2)}
-  </div>
-)}
-                                        </div>
-                                        <div className="text-muted text-sm" style={{ fontSize: '0.8rem' }}>
-                                            {new Date(tx.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })} {isUnusual && '• 12:43 AM (Unusual Time)'}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div style={{ textAlign: 'right' }}>
-                                    <div style={{ fontWeight: 600, color: tx.type === 'income' ? 'var(--success-text)' : 'var(--text-main)' }}>
-                                        {tx.type === 'income' ? '+' : '-'}${Number(tx.amount).toFixed(2)}
-                                    </div>
-                                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'capitalize' }}>
-                                        {tx.category || tx.type}
-                                    </div>
-                                </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                {Object.keys(groups).length === 0 ? (
+                    <div className="text-muted text-sm text-center py-8">No activity found.</div>
+                ) : (
+                    Object.entries(groups).map(([date, txs]) => (
+                        <div key={date}>
+                            <div style={{ 
+                                fontSize: '12px', 
+                                fontWeight: 800, 
+                                color: 'var(--text-muted)', 
+                                textTransform: 'uppercase', 
+                                letterSpacing: '0.05em',
+                                marginBottom: '1rem',
+                                paddingLeft: '8px',
+                                borderLeft: '3px solid var(--primary-light)'
+                            }}>
+                                {date}
                             </div>
-                        );
-                    })
+                            
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                {txs.map((tx) => {
+                                    const Icon = getCategoryIcon(tx.category || tx.description || '');
+                                    const colors = getCategoryColor(tx.category || tx.description || '');
+                                    const amt = Number(tx.amount);
+                                    const isTravel = tx.category === 'Travel' || tx.category === 'Transport';
+
+                                    return (
+                                        <div key={tx.id} className="flex-between transaction-item" style={{ 
+                                            padding: '12px', 
+                                            borderRadius: '16px',
+                                            background: 'var(--bg-body)',
+                                            border: '1px solid transparent',
+                                            transition: 'all 0.2s ease'
+                                        }}>
+                                            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                                                <div style={{
+                                                    width: 44,
+                                                    height: 44,
+                                                    borderRadius: '12px',
+                                                    background: colors.bg,
+                                                    color: colors.text,
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)'
+                                                }}>
+                                                    <Icon size={22} />
+                                                </div>
+                                                <div>
+                                                    <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>{tx.description}</div>
+                                                    <div className="text-muted" style={{ fontSize: '0.8rem', textTransform: 'capitalize' }}>
+                                                        {tx.category || tx.type}
+                                                    </div>
+                                                    
+                                                    {isTravel && (tx.fromDest || tx.toDest) && (
+                                                        <div style={{ 
+                                                            marginTop: '8px', 
+                                                            fontSize: '11px', 
+                                                            color: '#64748b',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            gap: '6px'
+                                                        }}>
+                                                            <MapPin size={10} color="#10b981" />
+                                                            <span>{tx.fromDest}</span>
+                                                            <ArrowRight size={10} />
+                                                            <span>{tx.toDest}</span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div style={{ textAlign: 'right' }}>
+                                                <div style={{ 
+                                                    fontWeight: 800, 
+                                                    fontSize: '1.05rem',
+                                                    color: tx.type === 'income' ? '#059669' : '#1e293b' 
+                                                }}>
+                                                    {tx.type === 'income' ? '+' : '-'}₹{amt.toLocaleString()}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    ))
                 )}
             </div>
-            {showViewAll && displayedTransactions.length > 0 && (
-                <button className="btn btn-secondary" style={{ width: '100%', marginTop: '1.25rem', justifyContent: 'center' }}>
-                    View All Transactions
+
+            {showViewAll && sorted.length > limit! && (
+                <button className="btn btn-secondary" style={{ width: '100%', marginTop: '2rem', borderRadius: '14px' }}>
+                    View Full History
                 </button>
             )}
 
             <style jsx>{`
-                .transaction-item:last-child {
-                    border-bottom: none !important;
-                    padding-bottom: 0 !important;
+                .transaction-item:hover {
+                    border-color: var(--primary-light) !important;
+                    background: white !important;
+                    transform: scale(1.01);
+                    box-shadow: 0 4px 12px -2px rgba(0,0,0,0.05);
                 }
             `}</style>
         </div>

@@ -127,7 +127,7 @@ export default function CashFlowForecast({ transactions }: { transactions: Trans
                 intersect: false,
                 callbacks: {
                     label: function (context: any) {
-                        return `$${context.raw.toFixed(2)}`;
+                        return `₹${context.raw.toLocaleString()}`;
                     }
                 }
             }

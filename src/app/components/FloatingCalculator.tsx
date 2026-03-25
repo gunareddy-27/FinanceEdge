@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Calculator, X, Minus, Plus, Sidebar as SidebarIcon, Equal } from 'lucide-react';
+import { Calculator, X } from 'lucide-react';
 
 export default function FloatingCalculator() {
     const [isOpen, setIsOpen] = useState(false);
@@ -16,8 +16,10 @@ export default function FloatingCalculator() {
         }
         if (key === '=') {
             try {
-                // Safe eval replacement (simple arithmetic)
-                const result = eval(equation.replace(/×/g, '*').replace(/÷/g, '/'));
+                // Safe evaluation logic (only numbers and basic operators)
+                const safeEquation = equation.replace(/×/g, '*').replace(/÷/g, '/');
+                if (!/^[0-9+\-*/.\s]+$/.test(safeEquation)) throw new Error();
+                const result = Function(`"use strict"; return (${safeEquation})`)();
                 setDisplay(String(result));
                 setEquation(String(result));
             } catch (e) {
@@ -35,44 +37,43 @@ export default function FloatingCalculator() {
     };
 
     return (
-        <>
+        <div style={{ position: 'relative' }}>
             <button 
                 onClick={() => setIsOpen(!isOpen)}
-                style={{
-                    position: 'fixed',
-                    bottom: '80px',
-                    right: '25px',
-                    width: '50px',
-                    height: '50px',
-                    borderRadius: '50%',
-                    background: 'var(--primary)',
-                    color: 'white',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxShadow: 'var(--shadow-lg)',
-                    zIndex: 1000,
-                    cursor: 'pointer',
-                    border: 'none'
+                className="btn btn-secondary"
+                style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '8px',
+                    padding: '8px 12px',
+                    height: '40px'
                 }}
             >
-                {isOpen ? <X size={20}/> : <Calculator size={20}/> }
+                <Calculator size={18}/>
+                <span className="hidden-mobile">Quick Calc</span>
             </button>
 
             {isOpen && (
                 <div style={{
-                    position: 'fixed',
-                    bottom: '140px',
-                    right: '25px',
+                    position: 'absolute',
+                    top: '50px',
+                    right: '0',
                     width: '280px',
                     background: 'var(--bg-card)',
                     border: '1px solid var(--border)',
-                    borderRadius: '20px',
+                    borderRadius: '16px',
                     boxShadow: 'var(--shadow-xl)',
-                    zIndex: 1001,
+                    zIndex: 2000,
                     padding: '1.25rem',
                     fontFamily: 'monospace'
                 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+                        <span style={{ fontSize: '13px', fontWeight: 'bold' }}>Calculator</span>
+                        <button onClick={() => setIsOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
+                            <X size={16}/>
+                        </button>
+                    </div>
+                    
                     <div style={{ 
                         background: 'var(--bg-body)', 
                         padding: '1rem', 
@@ -108,6 +109,6 @@ export default function FloatingCalculator() {
                     </div>
                 </div>
             )}
-        </>
+        </div>
     );
 }

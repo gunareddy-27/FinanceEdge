@@ -60,8 +60,8 @@ export default function ReceiptScanner({ onScanComplete }: ReceiptScannerProps) 
         let date: Date | null = null;
         let amount: number | null = null;
 
-        // 1. Find Total Amount (Look for "Total", "Amount", or highest number with decimal)
-        const amountRegex = /(\$|£|€)?\s?(\d+\.\d{2})/;
+        // 1. Find Total Amount (Look for "Total", "Amount", "₹", or highest number)
+        const amountRegex = /(₹|\$|£|€)?\s?(\d+\.\d{2})/;
         let potentialAmounts: number[] = [];
 
         lines.forEach(line => {
