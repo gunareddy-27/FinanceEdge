@@ -3,10 +3,28 @@
 A premium Full Stack Personal Finance & Tax Estimator for Freelancers.
 
 ## Tech Stack
-- **Framework:** Next.js 14 (App Router)
+- **Framework:** Next.js 15 (App Router / Turbopack)
 - **Styling:** Premium Vanilla CSS (Glassmorphism, CSS Variables)
 - **Database:** SQLite (via Prisma ORM)
-- **Charts:** Chart.js
+- **Charts:** Chart.js 4.0
+- **Mobile:** PWA (Progressive Web App) + Mobile-First Responsive Design
+- **OCR:** Tesseract.js
+
+## 🚀 Newly Added Features
+
+### 📱 Mobile-First Experience & PWA
+- **PWA Ready**: Install TaxPal directly on your Android/iOS home screen.
+- **Responsive Navigation**: Mobile-optimized bottom navigation and hidden sidebar for small viewports.
+- **Glassmorphic UI**: High-fidelity dark mode and vibrant indigo gradients.
+
+### 🤖 Advanced Finance Automations
+- **"Zero-Click" Expense Mapping**: Auto-save transactions directly from receipt scans using integrated OCR.
+- **Smart Debt Reminders**: One-click WhatsApp "Friendly Nudges" for unpaid split bills in the Expense Splitter.
+- **Quarterly Tax Autofill**: Intelligent tax estimation based on real year-to-date income with pulsing dashboard CTAs.
+- **Natural Language "Action Commands"**: Update your budgets directly through the AI Chatbot (e.g., *"Set Coffee budget to 5000"*).
+- **End-of-Month PDF Archiving**: Automated generation and logging of Monthly Summary reports to the database vault.
+- **Financial Health "Self-Healing"**: Automatic 20% budget caps applied to highest-spending categories when financial health is at risk.
+- **"Magic Link" API**: Log transactions instantly via a simple URL (e.g., `api/transactions/add?description=Food&amount=500&secret=taxpal_magic_key`).
 
 ## Getting Started
 
@@ -29,40 +47,32 @@ A premium Full Stack Personal Finance & Tax Estimator for Freelancers.
    - Navigate to `http://localhost:3000`
    - Use Demo Creds: Any email/password (Mock Auth)
 
-## Features Implemented
-- **Premium UI/UX:** Glassmorphism design system.
-- **Dashboard:** Real-time financial overview with charts.
-- **Database Schema:** Complete Prisma schema for Users, Transactions, Budgets, and Reports.
-- **Responsive Layout:** Sidebar navigation and grid layouts.
+## Features Included
 
-### 🤖 Advanced AI Features
-- **AI Expense Categorization:** NLP-based text classification for automatic categorization.
-- **AI Spending Pattern Analysis & Insights:** Automatic insight generation based on financial behaviors.
-- **AI Fraud Detection:** Isolation Forest implementation to detect anomalous spending. 
-- **AI Budget Recommendation:** Reinforcement learning concepts for generating smart automated budget defaults.
-- **AI Investment Suggestions:** Model-based portfolio generation (Mutual funds, stocks, etc.).
-- **AI Tax Optimization Advisor:** Tax rule engine to suggest optimal tax saving methods (e.g., Section 80C).
-- **AI Risk Detection:** Logistic regression monitoring to warn about financial instability.
-- **Cash Flow Prediction Model:** Forecast generation based on historic transaction trends.
-- **Receipt & Voice Input:** Seamless receipt OCR and intelligent voice-to-text expense parsing.
+### 🤖 AI-Powered Financial Intelligence
+- **AI Expense Categorization**: NLP-based text classification for automatic categorization.
+- **AI Spending Pattern Analysis**: Hyper-personalized insights based on financial behaviors.
+- **AI Fraud Detection**: Isolation Forest implementation for anomalous spend alerts. 
+- **AI Budget Recommendation**: Smart default budget generation for new users.
+- **AI Investment Suggestions**: Diversified portfolio generation (Mutual funds, stocks).
+- **AI Tax Advisor**: Guidance on Section 80C and other deductions.
+- **AI Risk Detection**: Logistic regression monitoring for financial stability warnings.
+- **Cash Flow Prediction**: 3-month rolling forecasts based on historic trends.
+- **Receipt & Voice Input**: Seamless OCR and voice-to-text expense parsing.
 
 ### 💹 Dedicated Financial Modules
-- **Emergency Fund Tracker:** Automated goal tracking built on 6x overhead recommendation calculations.
-- **Expense Splitter:** Splitwise-style group expense splitting and settlement tracking.
-- **Smart Spending Limits:** Proactive adjustments to budget limits reflecting 3-month rolling trends.
-- **Lifestyle Spending Analyzer:** Discretionary lifestyle spending evaluations pointing out exact potential savings.
-- **Auto-Savings Transfer Suggestions:** Intelligent advice on how much to automatically clear into savings per month.
-- **Location-based Expense Tracking:** Log and review expenses based precisely on where they occurred. 
-- **Financial Milestone Tracker:** Gamification and tracking of financial achievements.
+- **Emergency Fund Tracker**: Goal tracking based on 6x overhead recommendation.
+- **Expense Splitter**: Group splitting with WhatsApp settlement tracking.
+- **Smart Spending Limits**: Automated adjustments based on rolling 3-month trends.
+- **Lifestyle Spending Analyzer**: Discretionary spending evaluation and potential savings.
+- **Auto-Savings Transfer**: Suggestions for clearing surplus funds into savings.
+- **Location-based Tracking**: Precise location logging for business travel. 
+- **Financial Milestone Tracker**: Gamification of savings achievements.
 
-### 🔒 Enterprise-Grade Security
-- **MFA (Multi-Factor Authentication):** Enforced 2FA checks using Authenticator/OTP.
-- **End-to-End Encryption:** AES-256 enabled for sensitive field storage.
-- **Password Hashing:** Utilizing secure hash logic with generated salts.
-- **Secure Sessions:** Sessions protected with HttpOnly, Secure, and Strict policies.
-- **RBAC:** Core Role-Based Access Control logic separating Admin, Advisor, and standard users.
-- **API Rate Limiting:** 100 requests per minute API Throttle restrictions dynamically enforced.
-- **Login Attempt Monitoring:** Automatic 15-minute system lockouts triggered upon 5 concurrent failed login attempts.
-- **Secure File Upload Utility:** Binary protection constraining uploads to standard PDFs/Images under 5MB.
-- **Audit Logging System:** Complete historical trace logging of every major dataset mutation.
-- **Automated Cloud Backup Utility:** Cloud database syncing and snapshots tracking.
+### 🔒 Security & Persistence
+- **Prisma Database Integration**: Full persistence for Transactions, Goals, Splits, and Reports.
+- **MFA (Multi-Factor Auth)**: Enforced 2FA logic for sensitive account actions.
+- **End-to-End Encryption**: AES-256 for protected database fields.
+- **RBAC**: Multi-role system (User, Advisor, Admin).
+- **Rate Limiting**: Throttling for API security.
+- **Secure File Uploads**: Restricted binary validation for PDF archiving.
