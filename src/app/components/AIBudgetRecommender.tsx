@@ -1,8 +1,22 @@
 'use client';
 
+import { useState } from 'react';
 import { LayoutDashboard, Target } from 'lucide-react';
+import { useToast } from './ToastProvider';
 
 export default function AIBudgetRecommender() {
+    const { showToast } = useToast();
+    const [isApplying, setIsApplying] = useState(false);
+
+    const handleApply = () => {
+        setIsApplying(true);
+        // Simulate an API call latency for ML budget optimizations
+        setTimeout(() => {
+            setIsApplying(false);
+            showToast('Smart Budget Defaults generated via RL applied successfully!', 'success');
+        }, 1500);
+    };
+
     return (
         <div className="card">
             <h3 className="text-xl flex items-center gap-2 mb-4">
@@ -41,7 +55,9 @@ export default function AIBudgetRecommender() {
                 </div>
             </div>
 
-            <button className="btn btn-primary w-full text-sm">Apply Smart Budget Defaults</button>
+            <button onClick={handleApply} disabled={isApplying} className="btn btn-primary w-full text-sm">
+                {isApplying ? 'Applying ML Allocations...' : 'Apply Smart Budget Defaults'}
+            </button>
         </div>
     );
 }

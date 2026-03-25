@@ -1,0 +1,72 @@
+[debug] [2026-03-17T10:41:18.344Z] ----------------------------------------------------------------------
+[debug] [2026-03-17T10:41:18.348Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\anush\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2026-03-17T10:41:18.348Z] CLI Version:   15.10.1
+[debug] [2026-03-17T10:41:18.348Z] Platform:      win32
+[debug] [2026-03-17T10:41:18.348Z] Node Version:  v23.7.0
+[debug] [2026-03-17T10:41:18.349Z] Time:          Tue Mar 17 2026 16:11:18 GMT+0530 (India Standard Time)
+[debug] [2026-03-17T10:41:18.349Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-03-17T10:41:18.351Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  C:\Users\anush\OneDrive\Desktop\Tax\taxpal
+
+[debug] [2026-03-17T10:41:23.309Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2026-03-17T10:41:23.311Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] 
+[info] i  If you want to create a project in a Google Cloud organization or folder, please use "firebase projects:create" instead, and return to this command when you've created the project. 
+[debug] [2026-03-17T10:42:10.896Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-03-17T10:42:10.896Z] > authorizing via signed-in user (gunareddymopuru@gmail.com)
+[debug] [2026-03-17T10:42:20.521Z] Checked if tokens are valid: false, expires at: 1770287664727
+[debug] [2026-03-17T10:42:20.521Z] Checked if tokens are valid: false, expires at: 1770287664727
+[debug] [2026-03-17T10:42:20.521Z] > refreshing access token with scopes: []
+[debug] [2026-03-17T10:42:20.522Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-03-17T10:42:20.522Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-03-17T10:42:20.724Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-03-17T10:42:20.724Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-03-17T10:42:20.771Z] >>> [apiv2][query] POST https://firebase.googleapis.com/v1/projects:checkProjectId [none]
+[debug] [2026-03-17T10:42:20.771Z] >>> [apiv2][body] POST https://firebase.googleapis.com/v1/projects:checkProjectId {"proposedId":"financeEdge"}
+[debug] [2026-03-17T10:42:21.485Z] <<< [apiv2][status] POST https://firebase.googleapis.com/v1/projects:checkProjectId 200
+[debug] [2026-03-17T10:42:21.485Z] <<< [apiv2][body] POST https://firebase.googleapis.com/v1/projects:checkProjectId {"projectIdStatus":"PROJECT_ID_NOT_VALID","suggestedProjectId":"financeedge-a40eb"}
+[debug] [2026-03-17T10:42:30.008Z] Checked if tokens are valid: true, expires at: 1773747739724
+[debug] [2026-03-17T10:42:30.009Z] Checked if tokens are valid: true, expires at: 1773747739724
+[debug] [2026-03-17T10:42:30.010Z] >>> [apiv2][query] POST https://firebase.googleapis.com/v1/projects:checkProjectId [none]
+[debug] [2026-03-17T10:42:30.010Z] >>> [apiv2][body] POST https://firebase.googleapis.com/v1/projects:checkProjectId {"proposedId":"financeedge"}
+[debug] [2026-03-17T10:42:30.698Z] <<< [apiv2][status] POST https://firebase.googleapis.com/v1/projects:checkProjectId 200
+[debug] [2026-03-17T10:42:30.698Z] <<< [apiv2][body] POST https://firebase.googleapis.com/v1/projects:checkProjectId {"projectIdStatus":"PROJECT_ID_UNAVAILABLE","suggestedProjectId":"financeedge-beca9"}
+[debug] [2026-03-17T10:42:33.514Z] Checked if tokens are valid: true, expires at: 1773747739724
+[debug] [2026-03-17T10:42:33.514Z] Checked if tokens are valid: true, expires at: 1773747739724
+[debug] [2026-03-17T10:42:33.515Z] >>> [apiv2][query] POST https://firebase.googleapis.com/v1/projects:checkProjectId [none]
+[debug] [2026-03-17T10:42:33.515Z] >>> [apiv2][body] POST https://firebase.googleapis.com/v1/projects:checkProjectId {"proposedId":"financeedge1"}
+[debug] [2026-03-17T10:42:34.099Z] <<< [apiv2][status] POST https://firebase.googleapis.com/v1/projects:checkProjectId 200
+[debug] [2026-03-17T10:42:34.099Z] <<< [apiv2][body] POST https://firebase.googleapis.com/v1/projects:checkProjectId {"projectIdStatus":"PROJECT_ID_UNAVAILABLE","suggestedProjectId":"financeedge1-cb1bb"}
+[debug] [2026-03-17T10:42:39.610Z] Checked if tokens are valid: true, expires at: 1773747739724
+[debug] [2026-03-17T10:42:39.610Z] Checked if tokens are valid: true, expires at: 1773747739724
+[debug] [2026-03-17T10:42:39.612Z] >>> [apiv2][query] POST https://firebase.googleapis.com/v1/projects:checkProjectId [none]
+[debug] [2026-03-17T10:42:39.612Z] >>> [apiv2][body] POST https://firebase.googleapis.com/v1/projects:checkProjectId {"proposedId":"taxpal"}
+[debug] [2026-03-17T10:42:40.284Z] <<< [apiv2][status] POST https://firebase.googleapis.com/v1/projects:checkProjectId 200
+[debug] [2026-03-17T10:42:40.285Z] <<< [apiv2][body] POST https://firebase.googleapis.com/v1/projects:checkProjectId {"projectIdStatus":"PROJECT_ID_UNAVAILABLE","suggestedProjectId":"taxpal-31719"}
+[debug] [2026-03-17T10:42:57.851Z] Checked if tokens are valid: true, expires at: 1773747739724
+[debug] [2026-03-17T10:42:57.852Z] Checked if tokens are valid: true, expires at: 1773747739724
+[debug] [2026-03-17T10:42:57.853Z] >>> [apiv2][query] POST https://firebase.googleapis.com/v1/projects:checkProjectId [none]
+[debug] [2026-03-17T10:42:57.853Z] >>> [apiv2][body] POST https://firebase.googleapis.com/v1/projects:checkProjectId {"proposedId":"gunafinanceEdge"}
+[debug] [2026-03-17T10:42:58.284Z] <<< [apiv2][status] POST https://firebase.googleapis.com/v1/projects:checkProjectId 200
+[debug] [2026-03-17T10:42:58.284Z] <<< [apiv2][body] POST https://firebase.googleapis.com/v1/projects:checkProjectId {"projectIdStatus":"PROJECT_ID_NOT_VALID","suggestedProjectId":"gunafinanceedge"}
+[debug] [2026-03-17T10:43:02.213Z] Checked if tokens are valid: true, expires at: 1773747739724
+[debug] [2026-03-17T10:43:02.213Z] Checked if tokens are valid: true, expires at: 1773747739724
+[debug] [2026-03-17T10:43:02.214Z] >>> [apiv2][query] POST https://firebase.googleapis.com/v1/projects:checkProjectId [none]
+[debug] [2026-03-17T10:43:02.214Z] >>> [apiv2][body] POST https://firebase.googleapis.com/v1/projects:checkProjectId {"proposedId":"gunafinanceEdge"}
+[debug] [2026-03-17T10:43:02.789Z] <<< [apiv2][status] POST https://firebase.googleapis.com/v1/projects:checkProjectId 200
+[debug] [2026-03-17T10:43:02.789Z] <<< [apiv2][body] POST https://firebase.googleapis.com/v1/projects:checkProjectId {"projectIdStatus":"PROJECT_ID_NOT_VALID","suggestedProjectId":"gunafinanceedge"}

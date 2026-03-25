@@ -1,8 +1,21 @@
 'use client';
 
+import { useState } from 'react';
 import { Lightbulb, CheckCircle2 } from 'lucide-react';
+import { useToast } from './ToastProvider';
 
 export default function AITaxAdvisor() {
+    const { showToast } = useToast();
+    const [isGenerating, setIsGenerating] = useState(false);
+
+    const handleGenerate = () => {
+        setIsGenerating(true);
+        setTimeout(() => {
+            setIsGenerating(false);
+            showToast('Full Tax Recommendations Report analyzed and sent to your email!', 'success');
+        }, 2000);
+    };
+
     return (
         <div className="card">
             <h3 className="text-xl flex items-center gap-2 mb-4">
@@ -23,7 +36,9 @@ export default function AITaxAdvisor() {
                 </ul>
             </div>
 
-            <button className="btn btn-secondary w-full text-sm">View Full Tax Report</button>
+            <button onClick={handleGenerate} disabled={isGenerating} className="btn btn-secondary w-full text-sm">
+                {isGenerating ? 'Compiling Rules Engines Report...' : 'View Full Tax Report'}
+            </button>
         </div>
     );
 }

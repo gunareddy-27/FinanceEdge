@@ -14,7 +14,9 @@ export async function verifyPassword(password: string, storedHash: string): Prom
 }
 
 // 3. End-to-End Encryption for Sensitive Data (AES-256)
-const ENCRYPTION_KEY = crypto.randomBytes(32); // 32 bytes for AES-256
+const ENCRYPTION_KEY = process.env.ENCRYPTION_SECRET 
+    ? Buffer.from(process.env.ENCRYPTION_SECRET.padEnd(32, '0').slice(0, 32)) 
+    : crypto.randomBytes(32); // 32 bytes for AES-256
 const IV_LENGTH = 16;
 
 export function encryptData(text: string): string {

@@ -25,6 +25,7 @@ model User {
   reports       Report[]
   subscriptions Subscription[]
   goals         Goal[]
+  expenseGroups ExpenseGroup[]
 
   @@map("users")
 }
@@ -100,4 +101,27 @@ model Goal {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("goals")
+}
+
+model ExpenseGroup {
+  id          Int           @id @default(autoincrement())
+  userId      Int           @map("user_id")
+  name        String
+  totalAmount Decimal       @map("total_amount")
+  createdAt   DateTime      @default(now())
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  members     GroupMember[]
+
+  @@map("expense_groups")
+}
+
+model GroupMember {
+  id             Int          @id @default(autoincrement())
+  groupId        Int          @map("group_id")
+  name           String
+  shareAmount    Decimal      @map("share_amount")
+  isPaid         Boolean      @default(false) @map("is_paid")
+  expenseGroup   ExpenseGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@map("group_members")
 }

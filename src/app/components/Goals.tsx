@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { Target, Plus } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Target, Plus, Check } from 'lucide-react';
+import { addGoal, getGoals, updateGoalProgress } from '@/app/actions/goal';
 import Modal from './Modal';
 
 interface Goal {
@@ -13,60 +14,75 @@ interface Goal {
 }
 
 export default function Goals() {
-    const [goals, setGoals] = useState<Goal[]>([
-        {
-            id: 1,
-            name: "Emergency Fund",
-            targetAmount: 30000,
-            currentAmount: 18000,
-            deadline: new Date(new Date().setMonth(new Date().getMonth() + 6)).toISOString().slice(0, 10),
-        },
-        {
-            id: 2,
-            name: "New Laptop",
-            targetAmount: 80000,
-            currentAmount: 36000,
-            deadline: new Date(new Date().setMonth(new Date().getMonth() + 3)).toISOString().slice(0, 10),
-        }
-    ]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [goals, setGoals] = useState<Goal[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [isProgressModalOpen, setIsProgressModalOpen] = useState(false);
+    const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null);
+    const [progressAmount, setProgressAmount] = useState('');
+
     const [name, setName] = useState('');
     const [targetAmount, setTargetAmount] = useState('');
     const [deadline, setDeadline] = useState('');
 
+    useEffect(() => {
+        refreshGoals();
+    }, []);
+
+    const refreshGoals = async () => {
+        setLoading(true);
+        const data = await getGoals();
+        setGoals(data as unknown as Goal[]);
+        setLoading(false);
+    };
+
     const calculateMonthlySavings = (target: number, current: number, limitDate: string) => {
         const remaining = target - current;
         if (remaining <= 0) return 0;
-        const months = Math.max(1, Math.ceil((new Date(limitDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24 * 30)));
+        const diff = new Date(limitDate).getTime() - new Date().getTime();
+        const months = Math.max(1, Math.ceil(diff / (1000 * 60 * 60 * 24 * 30)));
         return Math.ceil(remaining / months);
     };
 
-    const handleAddGoal = (e: React.FormEvent) => {
+    const handleAddGoal = async (e: React.FormEvent) => {
         e.preventDefault();
-        const newGoal = {
-            id: Date.now(),
+        await addGoal({
             name,
             targetAmount: Number(targetAmount),
-            currentAmount: 0,
             deadline
-        };
-        setGoals([...goals, newGoal]);
-        setIsModalOpen(false);
+        });
+        setIsAddModalOpen(false);
         setName('');
         setTargetAmount('');
         setDeadline('');
+        refreshGoals();
     };
+
+    const handleUpdateProgress = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (selectedGoal) {
+            await updateGoalProgress(selectedGoal.id, Number(progressAmount));
+            setIsProgressModalOpen(false);
+            setProgressAmount('');
+            refreshGoals();
+        }
+    };
+
+    if (loading && goals.length === 0) {
+        return <div className="card text-center text-muted">Loading Goals...</div>;
+    }
 
     return (
         <div className="card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div className="flex-between">
                 <h3 className="text-xl font-bold flex items-center gap-2">
-                    <Target size={20} className="text-blue-600" />
+                    <Target size={20} className="text-primary" />
                     Financial Goals
                 </h3>
                 <button 
-                    onClick={() => setIsModalOpen(true)}
-                    style={{ background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '50%', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                    onClick={() => setIsAddModalOpen(true)}
+                    className="btn btn-primary"
+                    style={{ width: '28px', height: '28px', padding: 0, borderRadius: '50%' }}
                 >
                     <Plus size={16} />
                 </button>
@@ -78,24 +94,27 @@ export default function Goals() {
                     const reqMonthly = calculateMonthlySavings(goal.targetAmount, goal.currentAmount, goal.deadline);
                     
                     return (
-                        <div key={goal.id} style={{ background: '#f8fafc', padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                        <div key={goal.id} 
+                             className="card-sub"
+                             style={{ background: 'var(--bg-body)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--border)', cursor: 'pointer' }}
+                             onClick={() => { setSelectedGoal(goal); setIsProgressModalOpen(true); }}
+                        >
                             <div className="flex-between" style={{ marginBottom: '8px' }}>
-                                <span style={{ fontWeight: 'bold', fontSize: '14px' }}>{goal.name}</span>
-                                <span style={{ fontSize: '13px', fontWeight: 'bold' }}>{progress}%</span>
+                                <span style={{ fontWeight: 'bold' }}>{goal.name}</span>
+                                <span style={{ fontWeight: 'bold' }}>{progress}%</span>
                             </div>
                             
-                            {/* Progress bar */}
-                            <div style={{ width: '100%', height: '8px', background: '#e2e8f0', borderRadius: '4px', marginBottom: '8px', overflow: 'hidden' }}>
+                            <div style={{ width: '100%', height: '8px', background: 'var(--border)', borderRadius: '4px', marginBottom: '8px', overflow: 'hidden' }}>
                                 <div style={{ width: `${progress}%`, height: '100%', background: progress >= 100 ? '#22c55e' : 'var(--primary)', borderRadius: '4px', transition: 'width 0.3s' }}></div>
                             </div>
                             
-                            <div className="flex-between" style={{ fontSize: '12px', color: '#64748b', marginBottom: '8px' }}>
+                            <div className="flex-between text-muted" style={{ fontSize: '12px', marginBottom: '8px' }}>
                                 <span>₹{goal.currentAmount.toLocaleString()} / ₹{goal.targetAmount.toLocaleString()}</span>
-                                <span>In {Math.ceil((new Date(goal.deadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24 * 30))} months</span>
+                                <span>Due: {goal.deadline}</span>
                             </div>
 
                             {progress < 100 && (
-                                <div style={{ fontSize: '12px', background: '#e0e7ff', color: '#4338ca', padding: '6px', borderRadius: '6px', textAlign: 'center', fontWeight: '500' }}>
+                                <div style={{ fontSize: '12px', background: 'var(--primary-light)', color: 'var(--primary-dark)', padding: '6px', borderRadius: '6px', textAlign: 'center', fontWeight: '500' }}>
                                     Save ₹{reqMonthly.toLocaleString()}/mo to reach goal
                                 </div>
                             )}
@@ -104,23 +123,39 @@ export default function Goals() {
                 })}
             </div>
 
-            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Add Financial Goal">
+            {/* Modal: Add Goal */}
+            <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} title="Add Financial Goal">
                 <form onSubmit={handleAddGoal}>
                     <div style={{ marginBottom: '1rem' }}>
                         <label className="label">Goal Name</label>
-                        <input className="input" required value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Vacation" />
+                        <input className="input" required value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Dream House" />
                     </div>
                     <div style={{ marginBottom: '1rem' }}>
                         <label className="label">Target Amount (₹)</label>
-                        <input type="number" className="input" required value={targetAmount} onChange={e => setTargetAmount(e.target.value)} />
+                        <input type="number" className="input" required value={targetAmount} onChange={e => setTargetAmount(e.target.value)} placeholder="0.00" />
                     </div>
                     <div style={{ marginBottom: '1.5rem' }}>
                         <label className="label">Deadline</label>
                         <input type="date" className="input" required value={deadline} onChange={e => setDeadline(e.target.value)} />
                     </div>
                     <div className="flex-between" style={{ justifyContent: 'flex-end', gap: '1rem' }}>
-                        <button type="button" onClick={() => setIsModalOpen(false)} className="btn btn-secondary">Cancel</button>
+                        <button type="button" onClick={() => setIsAddModalOpen(false)} className="btn btn-secondary">Cancel</button>
                         <button type="submit" className="btn btn-primary">Save Goal</button>
+                    </div>
+                </form>
+            </Modal>
+
+            {/* Modal: Update Progress */}
+            <Modal isOpen={isProgressModalOpen} onClose={() => setIsProgressModalOpen(false)} title={`Update Progress: ${selectedGoal?.name}`}>
+                <form onSubmit={handleUpdateProgress}>
+                    <div style={{ marginBottom: '1.5rem' }}>
+                        <label className="label">Add Savings (₹)</label>
+                        <input type="number" className="input" required value={progressAmount} onChange={e => setProgressAmount(e.target.value)} placeholder="0.00" autoFocus />
+                        <p className="text-sm text-muted" style={{ marginTop: '0.5rem' }}>Existing savings: ₹{selectedGoal?.currentAmount.toLocaleString()}</p>
+                    </div>
+                    <div className="flex-between" style={{ justifyContent: 'flex-end', gap: '1rem' }}>
+                        <button type="button" onClick={() => setIsProgressModalOpen(false)} className="btn btn-secondary">Cancel</button>
+                        <button type="submit" className="btn btn-primary">Add Savings</button>
                     </div>
                 </form>
             </Modal>

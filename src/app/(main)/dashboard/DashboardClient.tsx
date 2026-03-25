@@ -112,12 +112,42 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
 
     return (
         <div>
-            <header className="flex-between" style={{ marginBottom: '2rem' }}>
+            <header className="dashboard-header">
+                <style jsx>{`
+                    .dashboard-header {
+                        margin-bottom: 2rem;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 1.5rem;
+                    }
+                    @media (min-width: 1024px) {
+                        .dashboard-header {
+                            flex-direction: row;
+                            justify-content: space-between;
+                            align-items: center;
+                        }
+                    }
+                    .header-actions {
+                        display: flex;
+                        gap: 1rem;
+                        flex-wrap: wrap;
+                        align-items: center;
+                    }
+                    @media (max-width: 767px) {
+                        .header-actions {
+                            width: 100%;
+                        }
+                        .header-actions > * {
+                            flex: 1;
+                            min-width: 140px;
+                        }
+                    }
+                `}</style>
                 <div>
                     <h1 className="text-3xl">Financial Dashboard</h1>
                     <p className="text-muted">Welcome back! Here's your financial summary.</p>
                 </div>
-                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                <div className="header-actions">
                     <CurrencySwitcher />
                     <ExportReportButton transactions={allTransactions} summary={summary} />
                     <button onClick={() => setExpenseModalOpen(true)} className="btn btn-secondary">Record Expense</button>

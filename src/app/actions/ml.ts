@@ -17,7 +17,7 @@ export async function analyzeSpendingBehavior() {
     const tx = await getAllTransactions();
     const expenses = tx.filter(t => t.type === 'expense');
 
-    if (expenses.length === 0) return { profile: 'New User', insights: 'Not enough data.' };
+    if (expenses.length === 0) return { profile: 'New User', insights: 'Not enough data.', weekendSpending: 0, weekdaySpending: 0 };
 
     let weekendSpending = 0;
     let weekdaySpending = 0;
@@ -53,7 +53,7 @@ export async function predictNextMonthExpense() {
     const tx = await getAllTransactions();
     const expenses = tx.filter(t => t.type === 'expense');
 
-    if (expenses.length < 5) return { prediction: 0, confidence: 0 };
+    if (expenses.length < 5) return { prediction: 0, confidence: '0%' };
 
     // Simple Linear Regression Simulation based on last 3 months
     const total = expenses.reduce((sum, current) => sum + Number(current.amount), 0);
@@ -120,7 +120,7 @@ export async function getOptimizedBudget() {
 }
 
 // --- 8. Investment Recommendation Engine ---
-export async function getInvestmentRecommendations() {
+export async function getInvestmentRecommendations(): Promise<{ riskLevel: string, portfolio: Record<string, string>, advice: string }> {
     const summary = await getFinancialSummary();
     const savings = summary.income - summary.expenses;
 

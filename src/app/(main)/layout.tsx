@@ -1,4 +1,5 @@
 import Sidebar from "@/app/components/Sidebar";
+import BottomNav from "@/app/components/BottomNav";
 
 export default function MainLayout({
     children,
@@ -11,6 +12,7 @@ export default function MainLayout({
             <main className="main-content">
                 {children}
             </main>
+            <BottomNav />
         </div>
     );
 }

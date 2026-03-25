@@ -13,6 +13,12 @@ import {
     CreditCard
 } from 'lucide-react';
 
+interface TransportInfo {
+    start: string;
+    end: string;
+    price: number;
+}
+
 interface Transaction {
     id: number;
     description: string | null;
@@ -20,6 +26,7 @@ interface Transaction {
     date: Date | string;
     type: string;
     category?: string | null;
+    transport?: TransportInfo;
 }
 
 interface TransactionListProps {
@@ -90,6 +97,11 @@ export default function TransactionList({ transactions, title = 'Recent Transact
                                         <div style={{ fontWeight: 500, fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
                                             {tx.description}
                                             {isUnusual && <span title="Unusual transaction detected" style={{ fontSize: '10px', background: '#ef4444', color: 'white', padding: '2px 6px', borderRadius: '10px' }}>Review</span>}
+{tx.transport && (
+  <div style={{ fontSize: '0.75rem', color: '#555', marginTop: '4px' }}>
+    {tx.transport.start} → {tx.transport.end} • ${tx.transport.price.toFixed(2)}
+  </div>
+)}
                                         </div>
                                         <div className="text-muted text-sm" style={{ fontSize: '0.8rem' }}>
                                             {new Date(tx.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })} {isUnusual && '• 12:43 AM (Unusual Time)'}
