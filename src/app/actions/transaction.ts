@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { getUserId } from './user';
 import { revalidatePath } from 'next/cache';
 
-export async function addTransaction(data: { description: string; amount: number; type: string; category: string; date: string }) {
+export async function addTransaction(data: { description: string; amount: number; type: string; category: string; date: string; voiceNotes?: string; attachmentUrl?: string }) {
     const userId = await getUserId();
 
     await prisma.transaction.create({
@@ -15,6 +15,8 @@ export async function addTransaction(data: { description: string; amount: number
             type: data.type,
             category: data.category,
             date: new Date(data.date),
+            voiceNotes: data.voiceNotes,
+            attachmentUrl: data.attachmentUrl
         },
     });
 

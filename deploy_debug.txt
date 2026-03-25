@@ -1,0 +1,177 @@
+[2026-03-25T16:28:53.455Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[2026-03-25T16:28:53.456Z] > authorizing via signed-in user (gunareddymopuru@gmail.com)
+[2026-03-25T16:28:53.456Z] [iam] checking project financeedge-7ec6a for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[2026-03-25T16:28:53.457Z] Checked if tokens are valid: true, expires at: 1774459442502
+[2026-03-25T16:28:53.457Z] Checked if tokens are valid: true, expires at: 1774459442502
+[2026-03-25T16:28:53.458Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/financeedge-7ec6a:testIamPermissions [none]
+[2026-03-25T16:28:53.458Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/financeedge-7ec6a:testIamPermissions  x-goog-user-project=financeedge-7ec6a
+[2026-03-25T16:28:53.459Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/financeedge-7ec6a:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[2026-03-25T16:28:55.193Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/financeedge-7ec6a:testIamPermissions 200
+[2026-03-25T16:28:55.193Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/financeedge-7ec6a:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[2026-03-25T16:28:55.194Z] Checked if tokens are valid: true, expires at: 1774459442502
+[2026-03-25T16:28:55.194Z] Checked if tokens are valid: true, expires at: 1774459442502
+[2026-03-25T16:28:55.194Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/financeedge-7ec6a [none]
+[2026-03-25T16:28:55.889Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/financeedge-7ec6a 200
+[2026-03-25T16:28:55.889Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/financeedge-7ec6a {"projectId":"financeedge-7ec6a","projectNumber":"1057370752016","displayName":"financeEdge","name":"projects/financeedge-7ec6a","resources":{"hostingSite":"financeedge-7ec6a"},"state":"ACTIVE","etag":"1_f47acaea-e923-4c06-8e03-6a5820cbbdb2"}
+[2026-03-25T16:28:58.881Z] Checked if tokens are valid: true, expires at: 1774459442502
+[2026-03-25T16:28:58.882Z] Checked if tokens are valid: true, expires at: 1774459442502
+[2026-03-25T16:28:58.882Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/financeedge-7ec6a/sites pageToken=&pageSize=10
+[2026-03-25T16:29:00.124Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/financeedge-7ec6a/sites 200
+[2026-03-25T16:29:00.124Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/financeedge-7ec6a/sites {"sites":[{"name":"projects/financeedge-7ec6a/sites/financeedge-7ec6a","defaultUrl":"https://financeedge-7ec6a.web.app","appId":"1:1057370752016:web:8275a3a92b6a709f67f695","type":"DEFAULT_SITE"}]}
+[2026-03-25T16:29:00.125Z] Checked if tokens are valid: true, expires at: 1774459442502
+[2026-03-25T16:29:00.125Z] Checked if tokens are valid: true, expires at: 1774459442502
+[2026-03-25T16:29:00.125Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/-/webApps/1:1057370752016:web:8275a3a92b6a709f67f695/config [none]
+[2026-03-25T16:29:01.346Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/-/webApps/1:1057370752016:web:8275a3a92b6a709f67f695/config 200
+[2026-03-25T16:29:01.346Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/-/webApps/1:1057370752016:web:8275a3a92b6a709f67f695/config {"projectId":"financeedge-7ec6a","appId":"1:1057370752016:web:8275a3a92b6a709f67f695","storageBucket":"financeedge-7ec6a.firebasestorage.app","apiKey":"AIzaSyBArV9CA7OXGxB3KeALj1PfqrOdQNdfUfU","authDomain":"financeedge-7ec6a.firebaseapp.com","messagingSenderId":"1057370752016","measurementId":"G-K5BF5Q7PE5","projectNumber":"1057370752016","version":"2"}
+
+   Thank you for trying our early preview of Next.js support on Firebase Hosting.
+   During the preview, support is best-effort and breaking changes can be expected. Proceed with caution.
+   The integration is known to work with Next.js version 12 - 15.0. You may encounter errors.
+
+   Documentation: https://firebase.google.com/docs/hosting/frameworks/nextjs
+   File a bug: https://github.com/firebase/firebase-tools/issues/new?template=bug_report.md
+   Submit a feature request: https://github.com/firebase/firebase-tools/issues/new?template=feature_request.md
+
+   We'd love to learn from you. Express your interest in helping us shape the future of Firebase Hosting: https://goo.gle/41enW5X
+
+[2026-03-25T16:29:07.418Z] Checked if tokens are valid: true, expires at: 1774459442502
+[2026-03-25T16:29:07.418Z] Checked if tokens are valid: true, expires at: 1774459442502
+[2026-03-25T16:29:07.418Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/financeedge-7ec6a/sites/financeedge-7ec6a [none]
+[2026-03-25T16:29:08.638Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/financeedge-7ec6a/sites/financeedge-7ec6a 200
+[2026-03-25T16:29:08.638Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/financeedge-7ec6a/sites/financeedge-7ec6a {"name":"projects/financeedge-7ec6a/sites/financeedge-7ec6a","defaultUrl":"https://financeedge-7ec6a.web.app","appId":"1:1057370752016:web:8275a3a92b6a709f67f695","type":"DEFAULT_SITE"}
+??? Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of C:\Users\anush\package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * C:\Users\anush\OneDrive\Desktop\Tax\taxpal\package-lock.json
+
+
+??? Next.js 16.1.6 (Turbopack)
+
+- Environments: .env
+
+
+  Creating an optimized production build ...
+
+??? Compiled successfully in 6.8s
+
+  Running TypeScript ...
+
+  Collecting page data using 7 workers ...
+
+  Generating static pages using 7 workers (0/13) ...
+
+prisma:query SELECT `main`.`users`.`id`, `main`.`users`.`name`, `main`.`users`.`email`, `main`.`users`.`password`, `main`.`users`.`country`, `main`.`users`.`income_bracket`, `main`.`users`.`currency`, `main`.`users`.`theme` FROM `main`.`users` WHERE (`main`.`users`.`email` = ? AND 1=1) LIMIT ? OFFSET ?
+
+prisma:query SELECT `main`.`users`.`id`, `main`.`users`.`name`, `main`.`users`.`email`, `main`.`users`.`password`, `main`.`users`.`country`, `main`.`users`.`income_bracket`, `main`.`users`.`currency`, `main`.`users`.`theme` FROM `main`.`users` WHERE (`main`.`users`.`email` = ? AND 1=1) LIMIT ? OFFSET ?
+
+prisma:query SELECT `main`.`tax_estimates`.`id`, `main`.`tax_estimates`.`user_id`, `main`.`tax_estimates`.`quarter`, `main`.`tax_estimates`.`year`, `main`.`tax_estimates`.`estimated_tax` FROM `main`.`tax_estimates` WHERE `main`.`tax_estimates`.`user_id` = ? ORDER BY `main`.`tax_estimates`.`id` DESC LIMIT ? OFFSET ?
+
+prisma:query SELECT `main`.`transactions`.`id`, `main`.`transactions`.`user_id`, `main`.`transactions`.`type`, `main`.`transactions`.`category`, `main`.`transactions`.`amount`, `main`.`transactions`.`date`, `main`.`transactions`.`description` FROM `main`.`transactions` WHERE `main`.`transactions`.`user_id` = ? ORDER BY `main`.`transactions`.`date` ASC LIMIT ? OFFSET ?
+
+  Generating static pages using 7 workers (3/13) 
+
+prisma:query SELECT `main`.`users`.`id`, `main`.`users`.`name`, `main`.`users`.`email`, `main`.`users`.`password`, `main`.`users`.`country`, `main`.`users`.`income_bracket`, `main`.`users`.`currency`, `main`.`users`.`theme` FROM `main`.`users` WHERE (`main`.`users`.`email` = ? AND 1=1) LIMIT ? OFFSET ?
+
+prisma:query SELECT `main`.`users`.`id`, `main`.`users`.`name`, `main`.`users`.`email`, `main`.`users`.`password`, `main`.`users`.`country`, `main`.`users`.`income_bracket`, `main`.`users`.`currency`, `main`.`users`.`theme` FROM `main`.`users` WHERE (`main`.`users`.`email` = ? AND 1=1) LIMIT ? OFFSET ?
+
+prisma:query SELECT `main`.`transactions`.`id`, `main`.`transactions`.`user_id`, `main`.`transactions`.`type`, `main`.`transactions`.`category`, `main`.`transactions`.`amount`, `main`.`transactions`.`date`, `main`.`transactions`.`description` FROM `main`.`transactions` WHERE `main`.`transactions`.`user_id` = ? LIMIT ? OFFSET ?
+
+prisma:query SELECT `main`.`transactions`.`id`, `main`.`transactions`.`user_id`, `main`.`transactions`.`type`, `main`.`transactions`.`category`, `main`.`transactions`.`amount`, `main`.`transactions`.`date`, `main`.`transactions`.`description` FROM `main`.`transactions` WHERE `main`.`transactions`.`user_id` = ? ORDER BY `main`.`transactions`.`date` ASC LIMIT ? OFFSET ?
+
+prisma:query SELECT `main`.`users`.`id`, `main`.`users`.`name`, `main`.`users`.`email`, `main`.`users`.`password`, `main`.`users`.`country`, `main`.`users`.`income_bracket`, `main`.`users`.`currency`, `main`.`users`.`theme` FROM `main`.`users` WHERE (`main`.`users`.`email` = ? AND 1=1) LIMIT ? OFFSET ?
+
+prisma:query SELECT `main`.`users`.`id`, `main`.`users`.`name`, `main`.`users`.`email`, `main`.`users`.`password`, `main`.`users`.`country`, `main`.`users`.`income_bracket`, `main`.`users`.`currency`, `main`.`users`.`theme` FROM `main`.`users` WHERE (`main`.`users`.`email` = ? AND 1=1) LIMIT ? OFFSET ?
+
+prisma:query SELECT `main`.`users`.`id`, `main`.`users`.`name`, `main`.`users`.`email`, `main`.`users`.`password`, `main`.`users`.`country`, `main`.`users`.`income_bracket`, `main`.`users`.`currency`, `main`.`users`.`theme` FROM `main`.`users` WHERE (`main`.`users`.`email` = ? AND 1=1) LIMIT ? OFFSET ?
+
+prisma:query SELECT `main`.`users`.`id`, `main`.`users`.`name`, `main`.`users`.`email`, `main`.`users`.`password`, `main`.`users`.`country`, `main`.`users`.`income_bracket`, `main`.`users`.`currency`, `main`.`users`.`theme` FROM `main`.`users` WHERE (`main`.`users`.`email` = ? AND 1=1) LIMIT ? OFFSET ?
+
+prisma:query SELECT `main`.`transactions`.`id`, `main`.`transactions`.`user_id`, `main`.`transactions`.`type`, `main`.`transactions`.`category`, `main`.`transactions`.`amount`, `main`.`transactions`.`date`, `main`.`transactions`.`description` FROM `main`.`transactions` WHERE `main`.`transactions`.`user_id` = ? ORDER BY `main`.`transactions`.`date` DESC LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`reports`.`id`, `main`.`reports`.`user_id`, `main`.`reports`.`period`, `main`.`reports`.`report_type`, `main`.`reports`.`file_path`, `main`.`reports`.`createdAt` FROM `main`.`reports` WHERE `main`.`reports`.`user_id` = ? ORDER BY `main`.`reports`.`createdAt` DESC LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`budgets`.`id`, `main`.`budgets`.`user_id`, `main`.`budgets`.`category`, `main`.`budgets`.`limit`, `main`.`budgets`.`month` FROM `main`.`budgets` WHERE (`main`.`budgets`.`user_id` = ? AND `main`.`budgets`.`month` = ?) LIMIT ? OFFSET ?
+
+prisma:query SELECT `main`.`transactions`.`id`, `main`.`transactions`.`user_id`, `main`.`transactions`.`type`, `main`.`transactions`.`category`, `main`.`transactions`.`amount`, `main`.`transactions`.`date`, `main`.`transactions`.`description` FROM `main`.`transactions` WHERE `main`.`transactions`.`user_id` = ? ORDER BY `main`.`transactions`.`date` ASC LIMIT ? OFFSET ?
+
+prisma:query SELECT `main`.`users`.`id`, `main`.`users`.`name`, `main`.`users`.`email`, `main`.`users`.`password`, `main`.`users`.`country`, `main`.`users`.`income_bracket`, `main`.`users`.`currency`, `main`.`users`.`theme` FROM `main`.`users` WHERE (`main`.`users`.`email` = ? AND 1=1) LIMIT ? OFFSET ?
+prisma:query SELECT SUM(`main`.`transactions`.`amount`) AS `_sum$amount`, `main`.`transactions`.`category` FROM `main`.`transactions` WHERE (`main`.`transactions`.`user_id` = ? AND `main`.`transactions`.`type` = ? AND `main`.`transactions`.`date` >= ? AND `main`.`transactions`.`date` <= ?) GROUP BY `main`.`transactions`.`category` LIMIT ? OFFSET ?
+
+prisma:query SELECT `main`.`users`.`id`, `main`.`users`.`name`, `main`.`users`.`email`, `main`.`users`.`password`, `main`.`users`.`country`, `main`.`users`.`income_bracket`, `main`.`users`.`currency`, `main`.`users`.`theme` FROM `main`.`users` WHERE (`main`.`users`.`email` = ? AND 1=1) LIMIT ? OFFSET ?
+
+prisma:query SELECT `main`.`transactions`.`id`, `main`.`transactions`.`user_id`, `main`.`transactions`.`type`, `main`.`transactions`.`category`, `main`.`transactions`.`amount`, `main`.`transactions`.`date`, `main`.`transactions`.`description` FROM `main`.`transactions` WHERE `main`.`transactions`.`user_id` = ? ORDER BY `main`.`transactions`.`date` ASC LIMIT ? OFFSET ?
+
+prisma:query SELECT `main`.`transactions`.`id`, `main`.`transactions`.`user_id`, `main`.`transactions`.`type`, `main`.`transactions`.`category`, `main`.`transactions`.`amount`, `main`.`transactions`.`date`, `main`.`transactions`.`description` FROM `main`.`transactions` WHERE `main`.`transactions`.`user_id` = ? LIMIT ? OFFSET ?
+
+prisma:query SELECT `main`.`users`.`id`, `main`.`users`.`name`, `main`.`users`.`email`, `main`.`users`.`password`, `main`.`users`.`country`, `main`.`users`.`income_bracket`, `main`.`users`.`currency`, `main`.`users`.`theme` FROM `main`.`users` WHERE (`main`.`users`.`email` = ? AND 1=1) LIMIT ? OFFSET ?
+
+prisma:query SELECT `main`.`transactions`.`id`, `main`.`transactions`.`user_id`, `main`.`transactions`.`type`, `main`.`transactions`.`category`, `main`.`transactions`.`amount`, `main`.`transactions`.`date`, `main`.`transactions`.`description` FROM `main`.`transactions` WHERE `main`.`transactions`.`user_id` = ? LIMIT ? OFFSET ?
+
+prisma:query SELECT `main`.`users`.`id`, `main`.`users`.`name`, `main`.`users`.`email`, `main`.`users`.`password`, `main`.`users`.`country`, `main`.`users`.`income_bracket`, `main`.`users`.`currency`, `main`.`users`.`theme` FROM `main`.`users` WHERE (`main`.`users`.`email` = ? AND 1=1) LIMIT ? OFFSET ?
+
+prisma:query SELECT `main`.`transactions`.`id`, `main`.`transactions`.`user_id`, `main`.`transactions`.`type`, `main`.`transactions`.`category`, `main`.`transactions`.`amount`, `main`.`transactions`.`date`, `main`.`transactions`.`description` FROM `main`.`transactions` WHERE `main`.`transactions`.`user_id` = ? LIMIT ? OFFSET ?
+
+  Generating static pages using 7 workers (6/13) 
+
+  Generating static pages using 7 workers (9/13) 
+
+prisma:query SELECT `main`.`users`.`id`, `main`.`users`.`name`, `main`.`users`.`email`, `main`.`users`.`password`, `main`.`users`.`country`, `main`.`users`.`income_bracket`, `main`.`users`.`currency`, `main`.`users`.`theme` FROM `main`.`users` WHERE (`main`.`users`.`email` = ? AND 1=1) LIMIT ? OFFSET ?
+
+prisma:query SELECT `main`.`transactions`.`id`, `main`.`transactions`.`user_id`, `main`.`transactions`.`type`, `main`.`transactions`.`category`, `main`.`transactions`.`amount`, `main`.`transactions`.`date`, `main`.`transactions`.`description` FROM `main`.`transactions` WHERE `main`.`transactions`.`user_id` = ? ORDER BY `main`.`transactions`.`date` DESC LIMIT ? OFFSET ?
+
+??? Generating static pages using 7 workers (13/13) in 768.0ms
+
+  Finalizing page optimization ...
+
+
+
+Route (app)
+??? ??? /
+??? ??? /_not-found
+??? ??? /ai-analytics
+??? ?? /api/transactions/add
+??? ??? /budgets
+??? ??? /dashboard
+??? ??? /login
+??? ??? /quick-add
+??? ??? /reports
+??? ??? /tax-estimator
+??? ??? /transactions
+
+
+
+???  (Static)   prerendered as static content
+??  (Dynamic)  server-rendered on demand
+
+
+Building a Cloud Function to run this application. This is needed due to:
+ ??? non-static component /api/transactions/add/route
+ ??? route with server action /login
+ ??? route with server action /ai-analytics
+ ??? route with server action /budgets
+ ??? route with server action /dashboard
+[2026-03-25T16:29:32.179Z]  ??? route with server action /reports
+[2026-03-25T16:29:32.179Z]  ??? route with server action /tax-estimator
+[2026-03-25T16:29:32.179Z]  ??? route with server action /transactions
+[2026-03-25T16:29:32.179Z]  ??? route with server action /_not-found
+[2026-03-25T16:29:32.179Z]  ??? route with server action /
+[2026-03-25T16:29:32.179Z]  ??? route with server action /quick-add
+
+[2026-03-25T16:29:33.233Z] skipping /_not-found due to server action
+[2026-03-25T16:29:33.233Z] skipping /login due to server action
+[2026-03-25T16:29:33.233Z] skipping /ai-analytics due to server action
+[2026-03-25T16:29:33.233Z] skipping /budgets due to server action
+[2026-03-25T16:29:33.233Z] skipping /dashboard due to server action
+[2026-03-25T16:29:33.233Z] skipping /reports due to server action
+[2026-03-25T16:29:33.233Z] skipping /tax-estimator due to server action
+[2026-03-25T16:29:33.233Z] skipping /transactions due to server action
+[2026-03-25T16:29:33.234Z] skipping / due to server action
+[2026-03-25T16:29:33.234Z] skipping /quick-add due to server action
+[2026-03-25T16:29:38.173Z] Checked if tokens are valid: true, expires at: 1774459442502
+[2026-03-25T16:29:38.174Z] Checked if tokens are valid: true, expires at: 1774459442502
+[2026-03-25T16:29:38.174Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/financeedge-7ec6a/sites/financeedge-7ec6a [none]
+[2026-03-25T16:29:39.329Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/financeedge-7ec6a/sites/financeedge-7ec6a 200
+[2026-03-25T16:29:39.329Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/financeedge-7ec6a/sites/financeedge-7ec6a {"name":"projects/financeedge-7ec6a/sites/financeedge-7ec6a","defaultUrl":"https://financeedge-7ec6a.web.app","appId":"1:1057370752016:web:8275a3a92b6a709f67f695","type":"DEFAULT_SITE"}
+[2026-03-25T16:29:42.254Z] Error: EPERM: operation not permitted, symlink 'C:\Users\anush\OneDrive\Desktop\Tax\taxpal\node_modules\@prisma\client' -> 'C:\Users\anush\OneDrive\Desktop\Tax\taxpal\.firebase\financeedge-7ec6a\functions\.next\node_modules\@prisma\client-cc9c928cce5ec4fd'
+
+Error: An unexpected error has occurred.

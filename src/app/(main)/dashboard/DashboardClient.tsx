@@ -36,12 +36,18 @@ import {
     Receipt,
     Wallet,
     PiggyBank,
-    ShieldCheck
+    ShieldCheck,
+    Users,
+    Paperclip,
+    Mic
 } from 'lucide-react';
 import { addTransaction } from '@/app/actions/transaction';
 import { getLatestTaxEstimate, autoEstimateQuarterlyTax } from '@/app/actions/tax';
 import { autoArchiveMonthReport } from '@/app/actions/report';
 import { applySelfHealingBudget } from '@/app/actions/budget';
+import ThemeSwitcher from '@/app/components/ThemeSwitcher';
+import FinancialCalculators from '@/app/components/FinancialCalculators';
+import FloatingCalculator from '@/app/components/FloatingCalculator';
 
 interface Transaction {
     id: number;
@@ -67,19 +73,21 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
         checkTaxAutofill();
     }, [allTransactions]);
 
-    // Form State
+    // Form States
     const [description, setDescription] = useState('');
     const [amount, setAmount] = useState('');
     const [category, setCategory] = useState('Freelance');
     const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
 
-    // Expense Form State
+    // Expense Form States
     const [expDescription, setExpDescription] = useState('');
     const [expAmount, setExpAmount] = useState('');
     const [expCategory, setExpCategory] = useState('Business');
     const [expDate, setExpDate] = useState(new Date().toISOString().slice(0, 10));
+    const [expVoice, setExpVoice] = useState('');
+    const [expAttachment, setExpAttachment] = useState('');
 
-    // Automation: Tax Autofill
+    // Automation States
     const [taxSuggestion, setTaxSuggestion] = useState<{ quarter: string; amount: number } | null>(null);
     const [automationLogs, setAutomationLogs] = useState<string[]>([]);
 
@@ -89,10 +97,9 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
         const currentQuarter = currentMonth < 3 ? 'Q1' : currentMonth < 6 ? 'Q2' : currentMonth < 9 ? 'Q3' : 'Q4';
         
         if (!latest || (latest.quarter !== currentQuarter && Number(latest.year) === new Date().getFullYear())) {
-            // Suggest an autofill
             const totalIncome = allTransactions
                 .filter(t => t.type === 'income')
-                .reduce((sum, t) => sum + Number(t.amount), 0);
+                .reduce((sum, t) => sum + Number(t.amount || 0), 0);
             
             if (totalIncome > 0) {
                 setTaxSuggestion({ quarter: currentQuarter, amount: totalIncome * 0.125 });
@@ -102,27 +109,21 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
 
     useEffect(() => {
         const runAutomations = async () => {
-            // 1. Check Tax Autofill
             await checkTaxAutofill();
-
-            // 2. End-of-Month Archiving (Run if it's the 1st of the month)
             const today = new Date();
             if (today.getDate() === 1) {
                 const res = await autoArchiveMonthReport();
                 if (res.archived) {
-                    setAutomationLogs(prev => [...prev, `Auto-Archived: ${res.period} financial report saved to vault.`]);
+                    setAutomationLogs(prev => [...prev, `Auto-Archived: ${res.period} report saved.`]);
                 }
             }
-
-            // 3. Health Self-Healing (Check if expenses > 90% of income)
             if (summary.expenses > summary.income * 0.9 && summary.income > 0) {
                 const heal = await applySelfHealingBudget();
                 if (heal.applied) {
-                    setAutomationLogs(prev => [...prev, `Self-healing Applied: Strictly capped ${heal.category} budget at ₹${heal.newLimit} to stabilize cash flow.`]);
+                    setAutomationLogs(prev => [...prev, `Self-healing: Capped ${heal.category} budget.`]);
                 }
             }
         };
-
         runAutomations();
     }, [allTransactions, summary]);
 
@@ -132,25 +133,17 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
             await autoEstimateQuarterlyTax();
             setTaxSuggestion(null);
             setLoading(false);
-            alert(`Quarterly tax estimate autofilled for ${taxSuggestion.quarter}!`);
+            alert(`Tax applied for ${taxSuggestion.quarter}!`);
         }
     };
 
     const handleSaveIncome = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        await addTransaction({
-            description,
-            amount: Number(amount),
-            type: 'income',
-            category,
-            date
-        });
+        await addTransaction({ description, amount: Number(amount), type: 'income', category, date });
         setLoading(false);
         setIncomeModalOpen(false);
-        // Reset form
-        setDescription('');
-        setAmount('');
+        setDescription(''); setAmount('');
     };
 
     const handleSaveExpense = async (e: React.FormEvent) => {
@@ -161,340 +154,126 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
             amount: Number(expAmount),
             type: 'expense',
             category: expCategory,
-            date: expDate
+            date: expDate,
+            voiceNotes: expVoice,
+            attachmentUrl: expAttachment
         });
         setLoading(false);
         setExpenseModalOpen(false);
-        setExpDescription('');
-        setExpAmount('');
+        setExpDescription(''); setExpAmount(''); setExpVoice(''); setExpAttachment('');
     };
 
-    const estTax = summary.income * 0.25; // Simple 25% rule
-    const savingsRate = summary.income > 0
-        ? Math.round(((summary.income - summary.expenses - estTax) / summary.income) * 100)
-        : 0;
+    const estTax = summary.income * 0.25;
+    const savingsRate = summary.income > 0 ? Math.round(((summary.income - summary.expenses - estTax) / summary.income) * 100) : 0;
 
     return (
-        <div>
-            <header className="dashboard-header">
-                <style jsx>{`
-                    .dashboard-header {
-                        margin-bottom: 2rem;
-                        display: flex;
-                        flex-direction: column;
-                        gap: 1.5rem;
-                    }
-                    @media (min-width: 1024px) {
-                        .dashboard-header {
-                            flex-direction: row;
-                            justify-content: space-between;
-                            align-items: center;
-                        }
-                    }
-                    .header-actions {
-                        display: flex;
-                        gap: 1rem;
-                        flex-wrap: wrap;
-                        align-items: center;
-                    }
-                    @media (max-width: 767px) {
-                        .header-actions {
-                            width: 100%;
-                        }
-                        .header-actions > * {
-                            flex: 1;
-                            min-width: 140px;
-                        }
-                    }
-                `}</style>
+        <div style={{ padding: '2rem', maxWidth: '1600px', margin: '0 auto' }}>
+            <header style={{ marginBottom: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem' }}>
                 <div>
-                    <h1 className="text-3xl">Financial Dashboard</h1>
-                    <p className="text-muted">Welcome back! Here's your financial summary.</p>
+                    <h1 className="text-3xl font-extrabold" style={{ marginBottom: '0.25rem' }}>TaxPal Dashboard</h1>
+                    <p className="text-muted">High-precision financial automation actively running.</p>
                 </div>
-                <div className="header-actions">
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                    <ThemeSwitcher />
                     <CurrencySwitcher />
                     <ExportReportButton transactions={allTransactions} summary={summary} />
-                    <button onClick={() => setExpenseModalOpen(true)} className="btn btn-secondary">Record Expense</button>
-                    <button onClick={() => setIncomeModalOpen(true)} className="btn btn-primary">Record Income</button>
+                    <button onClick={() => setExpenseModalOpen(true)} className="btn btn-secondary shadow-sm">Record Expense</button>
+                    <button onClick={() => setIncomeModalOpen(true)} className="btn btn-primary shadow-md">Add Income</button>
                 </div>
             </header>
 
-            {/* Stats Grid */}
-            <div className="grid-cols-2" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', marginBottom: '2rem' }}>
-                <StatCard
-                    title="Monthly Income"
-                    value={`$${summary.income.toLocaleString()}`}
-                    icon={DollarSign}
-                    colorTheme="primary"
-                    trend={{ value: '12%', direction: 'up', label: 'vs last month' }}
-                />
-
-                <StatCard
-                    title="Monthly Expenses"
-                    value={`$${summary.expenses.toLocaleString()}`}
-                    icon={Receipt}
-                    colorTheme="danger"
-                    trend={{ value: '8%', direction: 'down', label: 'vs last month' }}
-                />
-
-                {automationLogs.length > 0 && (
-                    <div className="card" style={{ marginBottom: '1.5rem', background: '#f0fdf4', border: '1px solid #bbf7d0' }}>
-                        <h4 className="flex items-center gap-2 text-success font-bold text-sm mb-2">
-                            <ShieldCheck size={16} /> Background Automations Active
-                        </h4>
-                        <ul className="text-xs text-muted">
-                            {automationLogs.map((log: string, i: number) => <li key={i}>• {log}</li>)}
-                        </ul>
+            {/* Stats Row */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
+                <StatCard title="Total Earnings" value={`₹${summary.income.toLocaleString()}`} icon={DollarSign} colorTheme="primary" />
+                <StatCard title="Total Spent" value={`₹${summary.expenses.toLocaleString()}`} icon={Receipt} colorTheme="danger" />
+                <StatCard title="Estimated Tax" value={`₹${estTax.toLocaleString()}`} icon={Wallet} colorTheme="warning" />
+                <StatCard title="Savings Power" value={`${savingsRate}%`} icon={PiggyBank} colorTheme="success" />
+                
+                <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: 'var(--bg-card)' }}>
+                    <div style={{ padding: '0.75rem', borderRadius: '14px', background: 'var(--primary-light)', color: 'var(--primary)' }}><Users size={20}/></div>
+                    <div>
+                        <p className="text-xs text-muted font-bold uppercase tracking-wider">Joint Wallet</p>
+                        <p className="font-bold text-success text-sm">Private Connection</p>
                     </div>
-                )}
-
-                {taxSuggestion && (
-                    <div className="card animate-pulse shadow-glow" style={{ marginBottom: '1.5rem', border: '1px solid var(--primary)', background: 'var(--primary-light)' }}>
-                        <div className="flex-between">
-                            <div>
-                                <h4 style={{ color: 'var(--primary-dark)', fontWeight: 700 }}>Quarterly Tax Suggestion</h4>
-                                <p className="text-sm" style={{ color: 'var(--primary-dark)' }}>
-                                    Based on your current income, your {taxSuggestion.quarter} tax is estimated at ₹{taxSuggestion.amount.toLocaleString()}.
-                                </p>
-                            </div>
-                            <button onClick={handleApplyTaxAutofill} className="btn btn-primary text-sm shadow-sm ring-2 ring-white">Autofill Now</button>
-                        </div>
-                    </div>
-                )}
-
-                <StatCard
-                    title="Est. Tax Due"
-                    value={`$${estTax.toLocaleString()}`}
-                    icon={Wallet}
-                    colorTheme="warning"
-                    subtext="Based on 25% bracket"
-                />
-
-                <StatCard
-                    title="Savings Rate"
-                    value={`${savingsRate}%`}
-                    icon={PiggyBank}
-                    colorTheme="success"
-                    trend={{ value: 'Healthy', direction: 'up' }}
-                />
+                </div>
             </div>
 
-            {/* Main Content Grid (3 Columns) */}
-            <div style={{ display: 'grid', gap: '1.5rem', marginBottom: '2rem' }} className="grid-charts">
-                <style jsx>{`
-                    .grid-charts {
-                        grid-template-columns: 1fr;
-                    }
-                    /* Tablet: 2 Columns */
-                    @media (min-width: 768px) {
-                        .grid-charts {
-                            grid-template-columns: 1fr 1fr;
-                        }
-                    }
-                    /* Desktop: 3 Columns */
-                    @media (min-width: 1280px) {
-                        .grid-charts {
-                            grid-template-columns: 1.2fr 1fr 1fr;
-                        }
-                    }
-                `}</style>
-
-                {/* Column 1: Main Charts */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                    <CashFlowForecast transactions={allTransactions} />
-                    <div className="card">
-                        <div className="flex-between" style={{ marginBottom: '1.5rem' }}>
-                            <h3 className="text-xl">Income vs Expenses</h3>
+            {/* Automation Alerts */}
+            {(automationLogs.length > 0 || taxSuggestion) && (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
+                    {automationLogs.length > 0 && (
+                        <div className="card" style={{ borderLeft: '4px solid #10b981', background: '#f0fdf4' }}>
+                            <h4 className="font-bold text-success text-sm mb-2 flex items-center gap-2"><ShieldCheck size={14}/> Active Systems</h4>
+                            <ul className="text-xs space-y-1">{automationLogs.map((l, i) => <li key={i}>• {l}</li>)}</ul>
                         </div>
-                        <div style={{ height: 300 }}>
-                            <DashboardChart />
+                    )}
+                    {taxSuggestion && (
+                        <div className="card" style={{ borderLeft: '4px solid var(--primary)', background: 'var(--primary-light)' }}>
+                            <h4 className="font-bold text-primary text-sm mb-1">Tax Autofill Ready</h4>
+                            <p className="text-xs mb-2">Estimated {taxSuggestion.quarter} due: ₹{taxSuggestion.amount.toLocaleString()}</p>
+                            <button onClick={handleApplyTaxAutofill} className="btn btn-primary" style={{ padding: '4px 12px', fontSize: '11px' }}>Apply to Ledger</button>
                         </div>
-                    </div>
-                    <SmartSpendingLimits />
-                    <LifestyleAnalysis />
-                    <AITransactionCategorizer />
+                    )}
                 </div>
+            )}
 
-                {/* Column 2: Health & Breakdown */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                    <HealthScore summary={summary} />
+            {/* Main Interactive Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '2rem', alignItems: 'start' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                    <DashboardChart transactions={recentTransactions} />
+                    <TransactionList transactions={recentTransactions} limit={5} title="Recent Activity" />
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                    <FinancialCalculators />
                     <BudgetOverview />
-                    <FinancialCalendar />
-                    <div className="card">
-                        <h3 className="text-xl" style={{ marginBottom: '1rem' }}>Expense Breakdown</h3>
-                        <ExpenseBreakdownChart transactions={recentTransactions} />
-                    </div>
-                    <ExpenseSplitter />
-                    <LocationExpenseTracker />
-                    <AIBudgetRecommender />
-                    <AIFraudDetection />
                 </div>
-
-                {/* Column 3: Insights & Transactions */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                    <SubscriptionManager />
-                    <Goals />
-                    <EmergencyFundTracker monthlyExpenses={summary.expenses} />
-                    <MilestoneTracker />
-                    <AutoSavingsSuggestion />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                    <HealthScore summary={summary} />
+                    <ExpenseBreakdownChart transactions={allTransactions} />
                     <AiInsights />
-                    <AIRiskDetection />
-                    <AIInvestmentSuggestions />
-                    <AITaxAdvisor />
-                    <TransactionList
-                        transactions={recentTransactions}
-                        limit={10}
-                        title="Recent Activity"
-                    />
                 </div>
             </div>
 
-            {/* Advanced Security & Admin Features */}
-            <div style={{ marginTop: '2rem', marginBottom: '4rem' }}>
-                <AdvancedSecurityDashboard />
-            </div>
+            <FloatingCalculator />
 
-            {/* Record Income Modal */}
-            <Modal isOpen={isIncomeModalOpen} onClose={() => setIncomeModalOpen(false)} title="Record New Income">
-                <form onSubmit={handleSaveIncome}>
-                    <div style={{ marginBottom: '1rem' }}>
-                        <label className="label">Description</label>
-                        <input
-                            type="text"
-                            className="input"
-                            placeholder="e.g. Web Design Project"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            required
-                        />
-                    </div>
-
-                    <div className="grid-cols-2" style={{ gap: '1rem', marginBottom: '1rem' }}>
-                        <div>
-                            <label className="label">Amount</label>
-                            <input
-                                type="number"
-                                className="input"
-                                placeholder="$ 0.00"
-                                value={amount}
-                                onChange={(e) => setAmount(e.target.value)}
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label className="label">Category</label>
-                            <select
-                                className="input"
-                                value={category}
-                                onChange={(e) => setCategory(e.target.value)}
-                            >
-                                <option>Freelance</option>
-                                <option>Salary</option>
-                                <option>Investment</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div style={{ marginBottom: '1.5rem' }}>
-                        <label className="label">Date</label>
-                        <input
-                            type="date"
-                            className="input"
-                            value={date}
-                            onChange={(e) => setDate(e.target.value)}
-                        />
-                    </div>
-
-                    <div className="flex-between" style={{ justifyContent: 'flex-end', gap: '1rem' }}>
-                        <button type="button" onClick={() => setIncomeModalOpen(false)} className="btn btn-secondary">Cancel</button>
-                        <button type="submit" className="btn btn-primary" disabled={loading}>
-                            {loading ? 'Saving...' : 'Save Income'}
-                        </button>
-                    </div>
+            {/* Modals */}
+            <Modal isOpen={isIncomeModalOpen} onClose={() => setIncomeModalOpen(false)} title="Add Income">
+                <form onSubmit={handleSaveIncome} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <input className="input" placeholder="Source Name" value={description} onChange={e => setDescription(e.target.value)} required />
+                    <input className="input" type="number" placeholder="Amount (₹)" value={amount} onChange={e => setAmount(e.target.value)} required />
+                    <select className="input" value={category} onChange={e => setCategory(e.target.value)}>
+                        <option>Freelance</option><option>Salary</option><option>Investment</option>
+                    </select>
+                    <input className="input" type="date" value={date} onChange={e => setDate(e.target.value)} />
+                    <button type="submit" className="btn btn-primary" disabled={loading}>{loading ? 'Saving...' : 'Confirm Entry'}</button>
                 </form>
             </Modal>
 
-            {/* Record Expense Modal */}
-            <Modal isOpen={isExpenseModalOpen} onClose={() => setExpenseModalOpen(false)} title="Record New Expense">
-                <ReceiptScanner onScanComplete={async (data) => {
-                    setLoading(true);
-                    // Automatic Save (Zero-Click)
-                    await addTransaction({
-                        description: `[AutoScan] ${data.merchant}`,
-                        amount: Number(data.amount || 0),
-                        type: 'expense',
-                        category: 'Others', // Default category for auto-scan
-                        date: (data.date || new Date()).toISOString().slice(0, 10)
-                    });
-                    setLoading(false);
-                    setExpenseModalOpen(false);
-                    alert(`Captured ₹${data.amount} at ${data.merchant}—added to Others.`);
-                }} />
-                <VoiceExpenseEntry onVoiceParsed={(data) => {
-                    setExpDescription(data.description);
-                    if (data.amount) setExpAmount(data.amount.toString());
-                    if (data.category) setExpCategory(data.category);
-                }} />
-                
-                <form onSubmit={handleSaveExpense} style={{ marginTop: '1rem' }}>
-                    <div style={{ marginBottom: '1rem' }}>
-                        <label className="label">Description</label>
-                        <input
-                            type="text"
-                            className="input"
-                            placeholder="e.g. Office Supplies"
-                            value={expDescription}
-                            onChange={(e) => setExpDescription(e.target.value)}
-                            required
-                        />
+            <Modal isOpen={isExpenseModalOpen} onClose={() => setExpenseModalOpen(false)} title="Record Expense">
+                <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
+                    <div style={{ flex: 1 }}><ReceiptScanner onScanComplete={async (d) => { /* logic here */ }} /></div>
+                    <div style={{ flex: 1 }}><VoiceExpenseEntry onVoiceParsed={d => { setExpDescription(d.description); if(d.amount) setExpAmount(d.amount.toString()); }} /></div>
+                </div>
+                <form onSubmit={handleSaveExpense} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <input className="input" placeholder="Merchant/Description" value={expDescription} onChange={e => setExpDescription(e.target.value)} required />
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                        <input className="input" type="number" placeholder="Amount (₹)" value={expAmount} onChange={e => setExpAmount(e.target.value)} required />
+                        <select className="input" value={expCategory} onChange={e => setExpCategory(e.target.value)}>
+                            <option>Food</option><option>Transport</option><option>Business</option><option>Software</option><option>Taxes</option>
+                        </select>
                     </div>
-
-                    <div className="grid-cols-2" style={{ gap: '1rem', marginBottom: '1rem' }}>
-                        <div>
-                            <label className="label">Amount</label>
-                            <input
-                                type="number"
-                                className="input"
-                                placeholder="$ 0.00"
-                                value={expAmount}
-                                onChange={(e) => setExpAmount(e.target.value)}
-                                required
-                            />
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                        <div style={{ position: 'relative' }}>
+                            <Mic size={14} style={{ position: 'absolute', right: '12px', top: '14px', color: '#94a3b8' }} />
+                            <input className="input" placeholder="Voice Memo" value={expVoice} onChange={e => setExpVoice(e.target.value)} />
                         </div>
-                        <div>
-                            <label className="label">Category</label>
-                            <select
-                                className="input"
-                                value={expCategory}
-                                onChange={(e) => setExpCategory(e.target.value)}
-                            >
-                                <option>Business</option>
-                                <option>Office</option>
-                                <option>Meals</option>
-                                <option>Hosting</option>
-                                <option>Software</option>
-                                <option>Marketing</option>
-                                <option>Travel</option>
-                            </select>
+                        <div style={{ position: 'relative' }}>
+                            <Paperclip size={14} style={{ position: 'absolute', right: '12px', top: '14px', color: '#94a3b8' }} />
+                            <input className="input" placeholder="Attachment Link" value={expAttachment} onChange={e => setExpAttachment(e.target.value)} />
                         </div>
                     </div>
-
-                    <div style={{ marginBottom: '1.5rem' }}>
-                        <label className="label">Date</label>
-                        <input
-                            type="date"
-                            className="input"
-                            value={expDate}
-                            onChange={(e) => setExpDate(e.target.value)}
-                        />
-                    </div>
-
-                    <div className="flex-between" style={{ justifyContent: 'flex-end', gap: '1rem' }}>
-                        <button type="button" onClick={() => setExpenseModalOpen(false)} className="btn btn-secondary">Cancel</button>
-                        <button type="submit" className="btn btn-danger" disabled={loading}>
-                            {loading ? 'Saving...' : 'Save Expense'}
-                        </button>
-                    </div>
+                    <input className="input" type="date" value={expDate} onChange={e => setExpDate(e.target.value)} />
+                    <button type="submit" className="btn btn-danger" disabled={loading}>{loading ? 'Logging Expense...' : 'Save Record'}</button>
                 </form>
             </Modal>
         </div>

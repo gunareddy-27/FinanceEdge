@@ -38,6 +38,8 @@ model Transaction {
   amount    Decimal
   date      DateTime
   description String?
+  voiceNotes  String?  @map("voice_notes")
+  attachmentUrl String?  @map("attachment_url")
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("transactions")

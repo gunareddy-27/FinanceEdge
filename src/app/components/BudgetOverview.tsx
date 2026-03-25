@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Plus, Trash2, AlertTriangle, BellRing } from 'lucide-react';
+import { Plus, Trash2, AlertTriangle, BellRing, ChevronLeft, ChevronRight, History } from 'lucide-react';
 import { getBudgetsForMonth } from '@/app/actions/budget';
 import { setBudget, deleteBudget } from '@/app/actions/budget';
 import { useToast } from './ToastProvider';
@@ -21,20 +21,21 @@ export default function BudgetOverview() {
     const { showToast } = useToast();
     const alertsShownRef = useRef(new Set<number>());
 
+    // State for selected month
+    const [viewMonth, setViewMonth] = useState(new Date().toISOString().slice(0, 7)); // YYYY-MM
+
     // Form
     const [category, setCategory] = useState('');
     const [limit, setLimit] = useState('');
 
-    const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
-
     useEffect(() => {
         loadBudgets();
-    }, []);
+    }, [viewMonth]);
 
     const loadBudgets = async () => {
         setIsLoading(true);
         try {
-            const data = await getBudgetsForMonth(currentMonth);
+            const data = await getBudgetsForMonth(viewMonth);
             // Sort by progress desc (most critical first)
             setBudgets(data.sort((a, b) => (b.spent / b.limit) - (a.spent / a.limit)));
             
@@ -63,7 +64,7 @@ export default function BudgetOverview() {
         e.preventDefault();
         if (!category || !limit) return;
 
-        await setBudget(category, Number(limit), currentMonth);
+        await setBudget(category, Number(limit), viewMonth); // Use selected month
         setIsAdding(false);
         setCategory('');
         setLimit('');
@@ -77,12 +78,27 @@ export default function BudgetOverview() {
         }
     };
 
+    const shiftMonth = (offset: number) => {
+        const [y, m] = viewMonth.split('-').map(Number);
+        const date = new Date(y, m - 1 + offset, 1);
+        setViewMonth(date.toISOString().slice(0, 7));
+    };
+
+    const monthLabel = new Date(viewMonth + '-01').toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+
     return (
-        <div className="card" style={{ padding: '1rem', height: '100%' }}>
+        <div className="card" style={{ padding: '1rem', height: '100%', position: 'relative' }}>
             <div className="flex-between" style={{ marginBottom: '1rem' }}>
                 <div>
-                    <h3 className="text-lg font-bold">Monthly Budgets</h3>
-                    <p className="text-muted text-xs">{new Date().toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</p>
+                    <h3 className="text-lg font-bold flex items-center gap-2">
+                        <History size={16} className="text-primary" />
+                        Budget Explorer
+                    </h3>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+                        <button onClick={() => shiftMonth(-1)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}><ChevronLeft size={14}/></button>
+                        <p className="text-muted text-xs font-bold" style={{ width: '100px', textAlign: 'center' }}>{monthLabel}</p>
+                        <button onClick={() => shiftMonth(1)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}><ChevronRight size={14}/></button>
+                    </div>
                 </div>
                 <button
                     className="btn btn-secondary"
@@ -124,7 +140,7 @@ export default function BudgetOverview() {
                 <div style={{ textAlign: 'center', padding: '1rem', color: 'var(--text-muted)', fontSize: '13px' }}>Loading...</div>
             ) : budgets.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '1rem', color: 'var(--text-muted)', fontSize: '13px' }}>
-                    <p style={{ marginBottom: '0.5rem' }}>No budgets set.</p>
+                    <p style={{ marginBottom: '0.5rem' }}>No budgets for {monthLabel}.</p>
                 </div>
             ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -142,8 +158,8 @@ export default function BudgetOverview() {
                                 <div className="flex-between" style={{ marginBottom: '2px' }}>
                                     <span style={{ fontWeight: 600, fontSize: '13px' }}>{b.category}</span>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                        <span style={{ fontSize: '12px', color: isOverBudget ? '#ef4444' : 'var(--text-muted)' }}>
-                                            ${b.spent.toLocaleString()} / ${b.limit.toLocaleString()}
+                                        <span style={{ fontSize: '11px', color: isOverBudget ? '#ef4444' : 'var(--text-muted)' }}>
+                                            ₹{b.spent.toLocaleString()} / ₹{b.limit.toLocaleString()}
                                         </span>
                                         <button
                                             onClick={() => handleDelete(b.id)}
@@ -169,12 +185,6 @@ export default function BudgetOverview() {
                                         transition: 'width 0.5s ease-out'
                                     }} />
                                 </div>
-                                {isOverBudget && (
-                                    <p style={{ fontSize: '10px', color: '#ef4444', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '2px' }}>
-                                        <AlertTriangle size={10} />
-                                        +${(b.spent - b.limit).toFixed(0)}
-                                    </p>
-                                )}
                             </div>
                         );
                     })}
