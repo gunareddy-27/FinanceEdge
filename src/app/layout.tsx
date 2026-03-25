@@ -2,8 +2,13 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "TaxMan - Freelance Finance",
+  title: "TaxPal - Smart Finance",
   description: "Manage income, track expenses, and estimate taxes.",
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/icon.png",
+    apple: "/icon.png"
+  }
 };
 
 import { ToastProvider } from "@/app/components/ToastProvider";

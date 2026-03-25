@@ -1,0 +1,16 @@
+{
+  "name": "TaxPal Finance",
+  "short_name": "TaxPal",
+  "description": "Smart finance management and tax estimator.",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#6366f1",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
