@@ -34,7 +34,6 @@ export async function generateReport(type: string, period: string) {
     const now = new Date();
     let startDate = new Date();
 
-    // Determine date range
     if (period === 'Current Month') {
         startDate = new Date(now.getFullYear(), now.getMonth(), 1);
     } else if (period === 'Last Quarter') {
@@ -43,7 +42,6 @@ export async function generateReport(type: string, period: string) {
         startDate = new Date(now.getFullYear() - 1, 0, 1);
     }
 
-    // Fetch transactions
     const transactions = await prisma.transaction.findMany({
         where: {
             userId,
@@ -52,7 +50,6 @@ export async function generateReport(type: string, period: string) {
         orderBy: { date: 'desc' }
     });
 
-    // Generate CSV Content
     const headers = ['Date', 'Description', 'Category', 'Type', 'Amount'];
     const rows = transactions.map(t => [
         t.date.toISOString().slice(0, 10),
@@ -69,11 +66,30 @@ export async function generateReport(type: string, period: string) {
 
     const filename = `TaxPal_${type.replace(' ', '_')}_${period.replace(' ', '_')}_${now.getTime()}.csv`;
 
-    // Log the report
     await logReport(period, type);
 
     return {
         content: csvContent,
         filename
     };
+}
+
+export async function autoArchiveMonthReport() {
+    const userId = await getUserId();
+    const now = new Date();
+    const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const monthName = lastMonthDate.toLocaleString('default', { month: 'long' });
+    const year = lastMonthDate.getFullYear();
+    const period = `${monthName} ${year}`;
+
+    const existing = await prisma.report.findFirst({
+        where: { userId, period, reportType: 'Monthly Summary' }
+    });
+
+    if (!existing) {
+        await generateReport('Monthly Summary', 'Current Month');
+        return { archived: true, period };
+    }
+
+    return { archived: false };
 }

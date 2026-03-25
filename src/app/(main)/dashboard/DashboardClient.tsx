@@ -31,15 +31,17 @@ import AIInvestmentSuggestions from '@/app/components/AIInvestmentSuggestions';
 import AITaxAdvisor from '@/app/components/AITaxAdvisor';
 import AIRiskDetection from '@/app/components/AIRiskDetection';
 import AIBudgetRecommender from '@/app/components/AIBudgetRecommender';
-import { getLatestTaxEstimate, autoEstimateQuarterlyTax } from '@/app/actions/tax';
-
 import {
     DollarSign,
     Receipt,
     Wallet,
-    PiggyBank
+    PiggyBank,
+    ShieldCheck
 } from 'lucide-react';
 import { addTransaction } from '@/app/actions/transaction';
+import { getLatestTaxEstimate, autoEstimateQuarterlyTax } from '@/app/actions/tax';
+import { autoArchiveMonthReport } from '@/app/actions/report';
+import { applySelfHealingBudget } from '@/app/actions/budget';
 
 interface Transaction {
     id: number;
@@ -79,6 +81,7 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
 
     // Automation: Tax Autofill
     const [taxSuggestion, setTaxSuggestion] = useState<{ quarter: string; amount: number } | null>(null);
+    const [automationLogs, setAutomationLogs] = useState<string[]>([]);
 
     const checkTaxAutofill = async () => {
         const latest = await getLatestTaxEstimate();
@@ -96,6 +99,32 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
             }
         }
     };
+
+    useEffect(() => {
+        const runAutomations = async () => {
+            // 1. Check Tax Autofill
+            await checkTaxAutofill();
+
+            // 2. End-of-Month Archiving (Run if it's the 1st of the month)
+            const today = new Date();
+            if (today.getDate() === 1) {
+                const res = await autoArchiveMonthReport();
+                if (res.archived) {
+                    setAutomationLogs(prev => [...prev, `Auto-Archived: ${res.period} financial report saved to vault.`]);
+                }
+            }
+
+            // 3. Health Self-Healing (Check if expenses > 90% of income)
+            if (summary.expenses > summary.income * 0.9 && summary.income > 0) {
+                const heal = await applySelfHealingBudget();
+                if (heal.applied) {
+                    setAutomationLogs(prev => [...prev, `Self-healing Applied: Strictly capped ${heal.category} budget at ₹${heal.newLimit} to stabilize cash flow.`]);
+                }
+            }
+        };
+
+        runAutomations();
+    }, [allTransactions, summary]);
 
     const handleApplyTaxAutofill = async () => {
         if (taxSuggestion) {
@@ -208,8 +237,19 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
                     trend={{ value: '8%', direction: 'down', label: 'vs last month' }}
                 />
 
+                {automationLogs.length > 0 && (
+                    <div className="card" style={{ marginBottom: '1.5rem', background: '#f0fdf4', border: '1px solid #bbf7d0' }}>
+                        <h4 className="flex items-center gap-2 text-success font-bold text-sm mb-2">
+                            <ShieldCheck size={16} /> Background Automations Active
+                        </h4>
+                        <ul className="text-xs text-muted">
+                            {automationLogs.map((log: string, i: number) => <li key={i}>• {log}</li>)}
+                        </ul>
+                    </div>
+                )}
+
                 {taxSuggestion && (
-                    <div className="card animate-pulse" style={{ border: '1px solid var(--primary)', background: 'var(--primary-light)' }}>
+                    <div className="card animate-pulse shadow-glow" style={{ marginBottom: '1.5rem', border: '1px solid var(--primary)', background: 'var(--primary-light)' }}>
                         <div className="flex-between">
                             <div>
                                 <h4 style={{ color: 'var(--primary-dark)', fontWeight: 700 }}>Quarterly Tax Suggestion</h4>
@@ -217,7 +257,7 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
                                     Based on your current income, your {taxSuggestion.quarter} tax is estimated at ₹{taxSuggestion.amount.toLocaleString()}.
                                 </p>
                             </div>
-                            <button onClick={handleApplyTaxAutofill} className="btn btn-primary text-sm">Autofill Now</button>
+                            <button onClick={handleApplyTaxAutofill} className="btn btn-primary text-sm shadow-sm ring-2 ring-white">Autofill Now</button>
                         </div>
                     </div>
                 )}
