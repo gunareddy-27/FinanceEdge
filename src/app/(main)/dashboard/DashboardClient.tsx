@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import DashboardChart from '@/app/components/DashboardChart';
 import AiInsights from '@/app/components/AiInsights';
 import StatCard from '@/app/components/StatCard';
@@ -31,6 +31,7 @@ import AIInvestmentSuggestions from '@/app/components/AIInvestmentSuggestions';
 import AITaxAdvisor from '@/app/components/AITaxAdvisor';
 import AIRiskDetection from '@/app/components/AIRiskDetection';
 import AIBudgetRecommender from '@/app/components/AIBudgetRecommender';
+import { getLatestTaxEstimate, autoEstimateQuarterlyTax } from '@/app/actions/tax';
 
 import {
     DollarSign,
@@ -60,6 +61,10 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
     const [isExpenseModalOpen, setExpenseModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
 
+    useEffect(() => {
+        checkTaxAutofill();
+    }, [allTransactions]);
+
     // Form State
     const [description, setDescription] = useState('');
     const [amount, setAmount] = useState('');
@@ -71,6 +76,36 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
     const [expAmount, setExpAmount] = useState('');
     const [expCategory, setExpCategory] = useState('Business');
     const [expDate, setExpDate] = useState(new Date().toISOString().slice(0, 10));
+
+    // Automation: Tax Autofill
+    const [taxSuggestion, setTaxSuggestion] = useState<{ quarter: string; amount: number } | null>(null);
+
+    const checkTaxAutofill = async () => {
+        const latest = await getLatestTaxEstimate();
+        const currentMonth = new Date().getMonth();
+        const currentQuarter = currentMonth < 3 ? 'Q1' : currentMonth < 6 ? 'Q2' : currentMonth < 9 ? 'Q3' : 'Q4';
+        
+        if (!latest || (latest.quarter !== currentQuarter && Number(latest.year) === new Date().getFullYear())) {
+            // Suggest an autofill
+            const totalIncome = allTransactions
+                .filter(t => t.type === 'income')
+                .reduce((sum, t) => sum + Number(t.amount), 0);
+            
+            if (totalIncome > 0) {
+                setTaxSuggestion({ quarter: currentQuarter, amount: totalIncome * 0.125 });
+            }
+        }
+    };
+
+    const handleApplyTaxAutofill = async () => {
+        if (taxSuggestion) {
+            setLoading(true);
+            await autoEstimateQuarterlyTax();
+            setTaxSuggestion(null);
+            setLoading(false);
+            alert(`Quarterly tax estimate autofilled for ${taxSuggestion.quarter}!`);
+        }
+    };
 
     const handleSaveIncome = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -172,6 +207,20 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
                     colorTheme="danger"
                     trend={{ value: '8%', direction: 'down', label: 'vs last month' }}
                 />
+
+                {taxSuggestion && (
+                    <div className="card animate-pulse" style={{ border: '1px solid var(--primary)', background: 'var(--primary-light)' }}>
+                        <div className="flex-between">
+                            <div>
+                                <h4 style={{ color: 'var(--primary-dark)', fontWeight: 700 }}>Quarterly Tax Suggestion</h4>
+                                <p className="text-sm" style={{ color: 'var(--primary-dark)' }}>
+                                    Based on your current income, your {taxSuggestion.quarter} tax is estimated at ₹{taxSuggestion.amount.toLocaleString()}.
+                                </p>
+                            </div>
+                            <button onClick={handleApplyTaxAutofill} className="btn btn-primary text-sm">Autofill Now</button>
+                        </div>
+                    </div>
+                )}
 
                 <StatCard
                     title="Est. Tax Due"
@@ -327,10 +376,19 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
 
             {/* Record Expense Modal */}
             <Modal isOpen={isExpenseModalOpen} onClose={() => setExpenseModalOpen(false)} title="Record New Expense">
-                <ReceiptScanner onScanComplete={(data) => {
-                    setExpDescription(data.merchant);
-                    if (data.amount) setExpAmount(data.amount.toString());
-                    if (data.date) setExpDate(data.date.toISOString().slice(0, 10));
+                <ReceiptScanner onScanComplete={async (data) => {
+                    setLoading(true);
+                    // Automatic Save (Zero-Click)
+                    await addTransaction({
+                        description: `[AutoScan] ${data.merchant}`,
+                        amount: Number(data.amount || 0),
+                        type: 'expense',
+                        category: 'Others', // Default category for auto-scan
+                        date: (data.date || new Date()).toISOString().slice(0, 10)
+                    });
+                    setLoading(false);
+                    setExpenseModalOpen(false);
+                    alert(`Captured ₹${data.amount} at ${data.merchant}—added to Others.`);
                 }} />
                 <VoiceExpenseEntry onVoiceParsed={(data) => {
                     setExpDescription(data.description);

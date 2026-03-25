@@ -104,18 +104,36 @@ export default function ExpenseSplitter() {
                         </div>
                         
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                            {group.members.map(member => (
-                                <div key={member.id} className="flex-between text-sm">
-                                    <span>{member.name}</span>
-                                    <button 
-                                        onClick={() => handleTogglePaid(member.id, member.isPaid)}
-                                        style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
-                                        className={member.isPaid ? 'text-success' : 'text-danger'}
-                                    >
-                                        {member.isPaid ? <><CheckCircle2 size={14}/> Paid</> : `Owes ₹${member.shareAmount.toLocaleString()}`}
-                                    </button>
-                                </div>
-                            ))}
+                            {group.members.map(member => {
+                                const whatsappLink = `https://wa.me/?text=${encodeURIComponent(
+                                    `Hey ${member.name}, just a friendly nudge for your share of ${group.name} (₹${member.shareAmount.toLocaleString()}). Cheers!`
+                                )}`;
+
+                                return (
+                                    <div key={member.id} className="flex-between text-sm" style={{ padding: '0.25rem 0' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <span>{member.name}</span>
+                                            {!member.isPaid && (
+                                                <a 
+                                                    href={whatsappLink} 
+                                                    target="_blank" 
+                                                    className="btn btn-secondary" 
+                                                    style={{ padding: '4px 8px', fontSize: '10px' }}
+                                                >
+                                                    Send Reminder
+                                                </a>
+                                            )}
+                                        </div>
+                                        <button 
+                                            onClick={() => handleTogglePaid(member.id, member.isPaid)}
+                                            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                                            className={member.isPaid ? 'text-success' : 'text-danger'}
+                                        >
+                                            {member.isPaid ? <><CheckCircle2 size={14}/> Paid</> : `Owes ₹${member.shareAmount.toLocaleString()}`}
+                                        </button>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 ))}
