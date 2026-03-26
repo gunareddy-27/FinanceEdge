@@ -1,13 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { 
-    User, 
-    Bell, 
-    Shield, 
-    LogOut, 
-    CreditCard, 
-    Settings, 
+import {
+    User,
+    Bell,
+    Shield,
+    LogOut,
+    CreditCard,
+    Settings,
     ArrowRight,
     Sparkles,
     CheckCircle2,
@@ -20,14 +20,27 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/app/components/ToastProvider';
 import BottomNav from '@/app/components/BottomNav';
 import Modal from '@/app/components/Modal';
+import { updateUserProfile } from '@/app/actions/user';
 
 export default function ProfileClient({ user }: { user: any }) {
     const { showToast } = useToast();
     const router = useRouter();
     const [isPremium, setIsPremium] = useState(true);
     const [isEditModalOpen, setEditModalOpen] = useState(false);
+    const [isSupportModalOpen, setSupportModalOpen] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
     const [name, setName] = useState(user?.name || 'User');
     const [email, setEmail] = useState(user?.email || 'user@taxpal.com');
+
+    const handleItemClick = (id: string) => {
+        if (id === 'info') {
+            setEditModalOpen(true);
+        } else if (id === 'help') {
+            setSupportModalOpen(true);
+        } else {
+            showToast(`Opening ${id} settings (Premium Feature)`, 'info');
+        }
+    };
 
     const menuItems = [
         { id: 'info', icon: User, label: 'Personal Information', sub: 'Update your name and photo', color: '#6366f1' },
@@ -37,17 +50,19 @@ export default function ProfileClient({ user }: { user: any }) {
         { id: 'help', icon: HelpCircle, label: 'Help & Support', sub: 'Connect with financial advisors', color: '#8b5cf6' }
     ];
 
-    const handleItemClick = (id: string) => {
-        if (id === 'info') {
-            setEditModalOpen(true);
-        } else {
-            showToast(`Opening ${id} settings (Premium Feature)`, 'info');
-        }
-    };
 
-    const handleSaveProfile = () => {
-        setEditModalOpen(false);
-        showToast("Profile updated successfully!", "success");
+    const handleSaveProfile = async () => {
+        setIsSaving(true);
+        try {
+            await updateUserProfile({ name });
+            setEditModalOpen(false);
+            showToast("Profile updated successfully!", "success");
+            router.refresh();
+        } catch (err) {
+            showToast("Failed to update profile", "error");
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     const handleSignOut = () => {
@@ -67,10 +82,10 @@ export default function ProfileClient({ user }: { user: any }) {
             </header>
 
             {/* Profile Hero Card */}
-            <div className="card" style={{ 
-                background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', 
-                color: 'white', 
-                padding: '2rem', 
+            <div className="card" style={{
+                background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
+                color: 'white',
+                padding: '2rem',
                 borderRadius: '32px',
                 border: 'none',
                 marginBottom: '2rem',
@@ -82,13 +97,13 @@ export default function ProfileClient({ user }: { user: any }) {
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', position: 'relative', zIndex: 1 }}>
-                    <div style={{ 
-                        width: '100px', 
-                        height: '100px', 
-                        borderRadius: '36px', 
-                        background: 'linear-gradient(45deg, #6366f1, #a855f7)', 
-                        display: 'flex', 
-                        alignItems: 'center', 
+                    <div style={{
+                        width: '100px',
+                        height: '100px',
+                        borderRadius: '36px',
+                        background: 'linear-gradient(45deg, #6366f1, #a855f7)',
+                        display: 'flex',
+                        alignItems: 'center',
                         justifyContent: 'center',
                         fontSize: '2.5rem',
                         fontWeight: 900,
@@ -99,13 +114,13 @@ export default function ProfileClient({ user }: { user: any }) {
                     <div>
                         <h2 style={{ fontSize: '1.75rem', fontWeight: 800, margin: 0 }}>{name}</h2>
                         <p style={{ opacity: 0.7, margin: '4px 0 12px 0' }}>{email}</p>
-                        
+
                         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                            <span style={{ 
-                                background: 'rgba(255,255,255,0.1)', 
-                                padding: '4px 12px', 
-                                borderRadius: '12px', 
-                                fontSize: '12px', 
+                            <span style={{
+                                background: 'rgba(255,255,255,0.1)',
+                                padding: '4px 12px',
+                                borderRadius: '12px',
+                                fontSize: '12px',
                                 fontWeight: 700,
                                 display: 'flex',
                                 alignItems: 'center',
@@ -114,12 +129,12 @@ export default function ProfileClient({ user }: { user: any }) {
                                 <Crown size={12} fill="#fbbf24" color="#fbbf24" />
                                 Prime Member
                             </span>
-                            <span style={{ 
-                                background: 'rgba(16, 185, 129, 0.2)', 
+                            <span style={{
+                                background: 'rgba(16, 185, 129, 0.2)',
                                 color: '#10b981',
-                                padding: '4px 12px', 
-                                borderRadius: '12px', 
-                                fontSize: '12px', 
+                                padding: '4px 12px',
+                                borderRadius: '12px',
+                                fontSize: '12px',
                                 fontWeight: 700
                             }}>
                                 KYC Verified
@@ -134,13 +149,13 @@ export default function ProfileClient({ user }: { user: any }) {
                 {menuItems.map((item, idx) => {
                     const Icon = item.icon;
                     return (
-                        <div 
-                            key={idx} 
+                        <div
+                            key={idx}
                             onClick={() => handleItemClick(item.id)}
-                            className="profile-item" 
-                            style={{ 
-                                display: 'flex', 
-                                alignItems: 'center', 
+                            className="profile-item"
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
                                 justifyContent: 'space-between',
                                 padding: '1.5rem',
                                 cursor: 'pointer',
@@ -150,11 +165,11 @@ export default function ProfileClient({ user }: { user: any }) {
                             }}
                         >
                             <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-                                <div style={{ 
-                                    background: `${item.color}15`, 
-                                    color: item.color, 
-                                    padding: '12px', 
-                                    borderRadius: '16px' 
+                                <div style={{
+                                    background: `${item.color}15`,
+                                    color: item.color,
+                                    padding: '12px',
+                                    borderRadius: '16px'
                                 }}>
                                     <Icon size={24} />
                                 </div>
@@ -169,17 +184,17 @@ export default function ProfileClient({ user }: { user: any }) {
                 })}
             </div>
 
-            <button 
+            <button
                 onClick={handleSignOut}
-                className="btn btn-secondary" 
-                style={{ 
-                    marginTop: '2rem', 
-                    width: '100%', 
-                    padding: '1.25rem', 
-                    borderRadius: '24px', 
-                    display: 'flex', 
-                    justifyContent: 'center', 
-                    alignItems: 'center', 
+                className="btn btn-secondary"
+                style={{
+                    marginTop: '2rem',
+                    width: '100%',
+                    padding: '1.25rem',
+                    borderRadius: '24px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
                     gap: '12px',
                     color: '#ef4444',
                     border: '1px solid #fee2e2',
@@ -199,18 +214,18 @@ export default function ProfileClient({ user }: { user: any }) {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     <div>
                         <label className="label">Full Name</label>
-                        <input 
-                            className="input" 
-                            value={name} 
-                            onChange={(e) => setName(e.target.value)} 
+                        <input
+                            className="input"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
                             placeholder="Enter your name"
                         />
                     </div>
                     <div>
                         <label className="label">Email Address</label>
-                        <input 
-                            className="input" 
-                            disabled 
+                        <input
+                            className="input"
+                            disabled
                             value={email}
                             placeholder="user@example.com"
                         />
@@ -225,6 +240,80 @@ export default function ProfileClient({ user }: { user: any }) {
                             Save Changes
                         </button>
                     </div>
+                </div>
+            </Modal>
+
+            <Modal
+                isOpen={isSupportModalOpen}
+                onClose={() => setSupportModalOpen(setSupportModalOpen(false) as any)}
+                title="FinanceEdge Support"
+            >
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                    <div style={{ background: 'var(--primary-light)', padding: '1.5rem', borderRadius: '16px', border: '1px solid var(--primary-border)' }}>
+                        <h4 className="font-bold flex items-center gap-2 mb-2">
+                            <Sparkles size={16} className="text-primary" />
+                            AI Financial Advisor
+                        </h4>
+                        <p className="text-xs text-muted mb-4">Our specialized AI agent can help with tax queries, expense audits, and investment strategies.</p>
+                        <button
+                            onClick={() => {
+                                setSupportModalOpen(false);
+                                showToast("Opening AI Chatbot...", "info");
+                                // The chatbot button is always available in the bottom right.
+                            }}
+                            className="btn btn-primary"
+                            style={{ width: '100%', fontSize: '13px' }}
+                        >
+                            Start AI Consultation
+                        </button>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                        <a
+                            href="https://wa.me/917815997345"
+                            target="_blank"
+                            style={{
+                                textDecoration: 'none',
+                                background: '#25d36615',
+                                padding: '1.25rem',
+                                borderRadius: '16px',
+                                border: '1px solid #25d36630',
+                                color: '#075e54',
+                                textAlign: 'center'
+                            }}
+                        >
+                            <p style={{ margin: 0, fontWeight: 800, fontSize: '14px' }}>WhatsApp</p>
+                            <p style={{ margin: 0, fontSize: '10px' }}>Direct Support</p>
+                        </a>
+                        <a
+                            href="mailto:gunareddymopuru@gmail.com"
+                            style={{
+                                textDecoration: 'none',
+                                background: 'var(--primary-light)',
+                                padding: '1.25rem',
+                                borderRadius: '16px',
+                                border: '1px solid var(--primary-border)',
+                                color: 'var(--primary)',
+                                textAlign: 'center'
+                            }}
+                        >
+                            <p style={{ margin: 0, fontWeight: 800, fontSize: '14px' }}>Email</p>
+                            <p style={{ margin: 0, fontSize: '10px' }}>Ticket System</p>
+                        </a>
+                    </div>
+
+                    <div className="card" style={{ padding: '1rem', background: '#f8fafc' }}>
+                        <h5 style={{ margin: '0 0 10px 0', fontSize: '12px', fontWeight: 800 }}>Quick FAQs</h5>
+                        <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            <li className="text-xs font-semibold cursor-pointer text-slate-600 hover:text-primary transition-colors">How do I export my tax reports?</li>
+                            <li className="text-xs font-semibold cursor-pointer text-slate-600 hover:text-primary transition-colors">Is my data end-to-end encrypted?</li>
+                            <li className="text-xs font-semibold cursor-pointer text-slate-600 hover:text-primary transition-colors">How does the AI categorize my expenses?</li>
+                        </ul>
+                    </div>
+
+                    <button onClick={() => setSupportModalOpen(false)} className="btn btn-secondary" style={{ width: '100%' }}>
+                        Close Help Hub
+                    </button>
                 </div>
             </Modal>
 

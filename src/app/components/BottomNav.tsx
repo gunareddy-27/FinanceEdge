@@ -1,6 +1,6 @@
 'use client';
 
-import { LayoutDashboard, ReceiptText, Bot, FileCheck, CircleUser, Plus } from 'lucide-react';
+import { LayoutDashboard, ReceiptText, Bot, Zap, CircleUser, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -11,7 +11,7 @@ export default function BottomNav() {
         { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
         { icon: ReceiptText, label: 'Transact', path: '/transactions' },
         { icon: Bot, label: 'Expert AI', path: '/ai-analytics' },
-        { icon: FileCheck, label: 'Reports', path: '/reports' },
+        { icon: Zap, label: 'Auto', path: '/automations' },
         { icon: CircleUser, label: 'Profile', path: '/profile' }
     ];
 

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { categorizeTransaction } from '@/lib/ai-engine';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
@@ -8,8 +9,15 @@ export async function GET(request: Request) {
     const description = searchParams.get('description');
     const amount = searchParams.get('amount');
     const type = searchParams.get('type') || 'expense'; // 'income' or 'expense'
-    const category = searchParams.get('category') || 'Others';
     const secret = searchParams.get('secret');
+    
+    // Auto AI Categorize if parameter is missing or 'Others'
+    let category = searchParams.get('category') || 'Others';
+    if (category === 'Others' && description) {
+        const aiResult = categorizeTransaction(description);
+        category = aiResult.category;
+        console.log(`[AI Auto-Categorized] ${description} -> ${category} (${aiResult.confidence}%)`);
+    }
 
     // Security check (Basic - ideally use env variable)
     const APP_SECRET = process.env.API_SECRET || 'taxpal_magic_key';
@@ -44,6 +52,7 @@ export async function GET(request: Request) {
         return NextResponse.json({ 
             success: true, 
             message: `Magic! Added ₹${amount} for ${description}`,
+            auto_category: category,
             transaction 
         });
 

@@ -102,3 +102,42 @@ export async function autoEstimateQuarterlyTax() {
     revalidatePath('/dashboard');
     return { quarter, estimatedTax };
 }
+
+export async function generateSmartTaxStrategy() {
+    const userId = await getUserId();
+    const currentYear = new Date().getFullYear();
+    const startDate = new Date(currentYear, 0, 1);
+    
+    const transactions = await prisma.transaction.findMany({
+        where: { userId, date: { gte: startDate } }
+    });
+
+    const income = (transactions as any[])
+        .filter(t => t.type === 'income')
+        .reduce((sum, t) => sum + Number(t.amount || 0), 0);
+
+    const suggestions: string[] = [];
+    let potentialSavings = 0;
+
+    if (income > 1000000) {
+        suggestions.push("Max out Section 80C through ELSS/PPF for a ₹1.5L deduction.");
+        suggestions.push("Contribute to NPS (Section 80CCD) for an additional ₹50,000 exemption.");
+        suggestions.push("Leverage Section 80D for medical insurance premiums for self and parents.");
+        potentialSavings = 46800;
+    } else if (income > 500000) {
+        suggestions.push("Utilize full ₹1.5L limit of Section 80C via PPF/NPS.");
+        suggestions.push("Compare Old vs New Tax Regime for optimized tax-free threshold.");
+        potentialSavings = 22500;
+    } else {
+        suggestions.push("Claim Section 87A rebate to reduce tax liability to zero.");
+        suggestions.push("Keep track of and document all business-related travel and software expenses.");
+        potentialSavings = 12500;
+    }
+
+    return {
+        income,
+        suggestions,
+        potentialSavings,
+        generatedAt: new Date().toISOString()
+    };
+}

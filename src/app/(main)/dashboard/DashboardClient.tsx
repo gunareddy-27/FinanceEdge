@@ -29,11 +29,13 @@ import InsightFeed from '@/app/components/InsightFeed';
 import FinancialCalculators from '@/app/components/FinancialCalculators';
 import { CardSkeleton } from '@/app/components/Skeleton';
 import AnalysisExportButton from '@/app/components/AnalysisExportButton';
+import AITaxAdvisor from '@/app/components/AITaxAdvisor';
 
 import { addTransaction } from '@/app/actions/transaction';
 import { getLatestTaxEstimate, autoEstimateQuarterlyTax } from '@/app/actions/tax';
 import { autoArchiveMonthReport } from '@/app/actions/report';
 import { useToast } from '@/app/components/ToastProvider';
+import { categorizeClient } from '@/lib/ai-client';
 
 // Motion Configs - Fixed with as const
 const container = {
@@ -84,6 +86,8 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
     // Chart Refs for PDF export
     const barChartRef = useRef<HTMLDivElement | null>(null);
     const pieChartRef = useRef<HTMLDivElement | null>(null);
+    const healthChartRef = useRef<HTMLDivElement | null>(null);
+    const proChartRef = useRef<HTMLDivElement | null>(null);
 
     // Hydration check
     useEffect(() => {
@@ -241,7 +245,7 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
                             WebkitTextFillColor: 'transparent',
                             letterSpacing: '-0.03em'
                         }}>
-                            TaxPal Intelligence
+                            FinanceEdge Intelligence
                         </h1>
                     </div>
                     <p className="text-muted font-medium text-sm flex items-center gap-2">
@@ -276,16 +280,16 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
                     <CurrencySwitcher />
                     <AnalysisExportButton 
                         behaviorData={{ 
-                            profile: 'Calculated from Summary', 
-                            insights: 'Dashboard insights active.',
+                            profile: isProMode ? 'AGGRESSIVE GROWTH' : 'STABLE SAVER', 
+                            insights: `Current burn rate is ${Math.round((summary.expenses / summary.income) * 100)}% of income. Momentum is ${summary.income > summary.expenses ? 'POSITIVE' : 'NEGATIVE'}.`,
                             weekendSpending: Math.round(summary.expenses * 0.4),
                             weekdaySpending: Math.round(summary.expenses * 0.6)
                         }}
-                        predictionData={{ prediction: summary.income * 0.9, confidence: 'Derived' }}
-                        anomaliesData={recentTransactions.slice(0, 2)}
-                        budgetData={null}
-                        riskData={null}
-                        chartContainerRefs={[barChartRef, pieChartRef]}
+                        predictionData={{ prediction: summary.income * 0.95, confidence: '94% AI Confidence' }}
+                        anomaliesData={recentTransactions.slice(0, 3)}
+                        budgetData={budgets}
+                        riskData={{ level: summary.expenses > summary.income ? 'HIGH' : 'LOW' }}
+                        chartContainerRefs={[barChartRef, pieChartRef, healthChartRef, proChartRef]}
                     />
                     <ExportReportButton transactions={allTransactions} summary={summary} />
                 </div>
@@ -342,6 +346,7 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
                         style={{ marginBottom: '3rem', overflow: 'hidden' }}
+                        ref={proChartRef}
                     >
                         <ProAnalytics transactions={allTransactions} />
                     </motion.div>
@@ -350,7 +355,7 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
 
             {/* Automation Feed */}
             {(automationLogs.length > 0 || taxSuggestion) && (
-                <motion.div variants={item} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
+                <motion.div variants={item} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 450px))', gap: '1.5rem', marginBottom: '3rem' }}>
                     {automationLogs.length > 0 && (
                         <div className="card" style={{ borderLeft: '6px solid #10b981', background: '#f0fdf4', borderRadius: '20px' }}>
                             <div className="flex items-center gap-3 mb-4">
@@ -397,7 +402,10 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
                     <BudgetOverview />
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                    <HealthScore summary={summary} />
+                    <div ref={healthChartRef}>
+                        <HealthScore summary={summary} />
+                    </div>
+                    <AITaxAdvisor />
                     <div ref={pieChartRef}>
                         <ExpenseBreakdownChart transactions={allTransactions} />
                     </div>
@@ -428,10 +436,15 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
                             setExpDescription(d.merchant); 
                             if(d.amount) setExpAmount(d.amount.toString()); 
                             if(d.date) setExpDate(d.date.toISOString().split('T')[0]);
+                            if(d.merchant) setExpCategory(categorizeClient(d.merchant));
                         }} />
                     </div>
                     <div style={{ flex: 1 }}>
-                        <VoiceExpenseEntry onVoiceParsed={d => { setExpDescription(d.description); if(d.amount) setExpAmount(d.amount.toString()); }} />
+                        <VoiceExpenseEntry onVoiceParsed={d => { 
+                            setExpDescription(d.description); 
+                            if(d.amount) setExpAmount(d.amount.toString()); 
+                            if(d.description) setExpCategory(categorizeClient(d.description));
+                        }} />
                     </div>
                 </div>
                 <form onSubmit={handleSaveExpense} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>

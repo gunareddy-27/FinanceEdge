@@ -24,3 +24,14 @@ export async function getUserId() {
 
     return user.id;
 }
+
+export async function updateUserProfile(data: { name: string }) {
+    const userId = await getUserId();
+    
+    await prisma.user.update({
+        where: { id: userId },
+        data: { name: data.name }
+    });
+
+    return { success: true };
+}

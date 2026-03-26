@@ -9,7 +9,9 @@ import {
     Calculator,
     FileText,
     LogOut,
-    BrainCircuit
+    BrainCircuit,
+    Zap,
+    UserCircle
 } from 'lucide-react';
 
 import ThemeSwitcher from './ThemeSwitcher';
@@ -18,12 +20,13 @@ const navItems = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Transactions', href: '/transactions', icon: Receipt },
     { name: 'Budgets', href: '/budgets', icon: PieChart },
+    { name: 'Automations', href: '/automations', icon: Zap },
     { name: 'Tax Estimator', href: '/tax-estimator', icon: Calculator },
     { name: 'Reports', href: '/reports', icon: FileText },
     { name: 'AI Lab', href: '/ai-analytics', icon: BrainCircuit }
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ user }: { user: any }) {
     const pathname = usePathname();
     const router = useRouter();
 
@@ -71,7 +74,37 @@ export default function Sidebar() {
                 <ThemeSwitcher />
             </div>
 
-            <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
+            <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <Link href="/profile" style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '0.75rem', 
+                    padding: '0.75rem 1rem',
+                    textDecoration: 'none',
+                    color: 'var(--text-main)',
+                    borderRadius: 'var(--radius-sm)',
+                    background: pathname === '/profile' ? 'var(--primary-light)' : 'transparent'
+                }}>
+                    <div style={{ 
+                        width: '32px', 
+                        height: '32px', 
+                        borderRadius: '10px', 
+                        background: 'var(--primary)', 
+                        color: 'white', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center',
+                        fontSize: '14px',
+                        fontWeight: 700
+                    }}>
+                        {user?.name?.[0] || <UserCircle size={18} />}
+                    </div>
+                    <div style={{ overflow: 'hidden' }}>
+                        <p style={{ margin: 0, fontSize: '13px', fontWeight: 700, whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{user?.name || 'User'}</p>
+                        <p style={{ margin: 0, fontSize: '10px', color: 'var(--text-muted)', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>Pro Member</p>
+                    </div>
+                </Link>
+
                 <button
                     onClick={handleSignOut}
                     style={{
