@@ -2,22 +2,55 @@
 
 A premium, autonomous financial intelligence system & strategic wealth engine for modern professionals.
 
-## 🌟 High-Fidelity Intelligence & Automation
+## 🌟 High-Fidelity Intelligence Hub
 
-### 📊 Intelligence Hub & Auditing
-- **Autonomous Audit Engine**: Real-time multi-step financial scanning (Ledger, Benchmarking, Graph Calibration).
-- **Interactive Report Preview**: View high-fidelity PDF reports directly in-browser before downloading.
+### 📊 Advanced Audit & Reporting
+- **Autonomous Audit Engine**: Real-time multi-step financial scanning (Ledger Scanning, Multi-Scenario Benchmarking, Graph Calibration).
+- **Interactive Report Preview**: High-fidelity scrollable PDF viewer directly in the modal before commitment.
 - **Board-Ready Strategy Exports**: Professional PDF generation with embedded visual instruments, behavioral profiling, and neural health graphs.
-- **Visual Data Audit**: Automated html2canvas capture for all dashboard charts, ensuring data transparency in reports.
-- **Premium PDF UI**: Dark-themed, glassmorphic report designs with rounded cards and decorative strategic elements.
+- **Visual Data Audit**: Automated html2canvas capture for all dashboard charts, ensuring total data transparency in exports.
 
-### 🤖 Autonomous "Zero-Input" Automations
-- **AI Auto-Categorization (NLP)**: Regex-based high-confidence classification for 50+ global merchants (Uber, Swiggy, Amazon, AWS, Netflix, etc.).
-- **Smart Overdue Nudges (WhatsApp)**: Automated debt-scanning for split bills with integrated "Friendly Nudge" simulations for bills > 48 hours.
-- **Zero-Input Magic Link API**: Publicly accessible endpoint (`/api/magic-link`) for external logging via webhooks (Postman/cURL compatible).
-- **Security Anomaly Detection**: Real-time spending spike alerts flagging any expense > 2.5x the 3-month rolling average.
-- **Autonomous Wealth Engine**: Savings Rate analysis with specific portfolio allocations (Equity/Debt/Gold) based on real-time surplus.
-- **Monthly Archival Pipeline**: Automated end-of-month PDF generation and cache clearing for a fresh financial slate.
+## 🤖 Full Automation Ecosystem (The "Zero-Input" Suite)
+
+FinanceEdge is built on an autonomous background engine that proactively manages your wealth. Every feature below is part of the `Run Smart Cycle` orchestration:
+
+### 1. 🧠 AI Auto-Categorization (NLP)
+- **Engine**: Regex-powered high-confidence text classifier.
+- **Mapping**: Automatically extracts labels for 50+ global merchants including Uber, Swiggy, Amazon, AWS, Netflix, Starbucks, and more.
+- **Accuracy**: 99% confidence scoring for recognized merchant patterns.
+
+### 2. 📲 Smart Overdue Nudges (WhatsApp)
+- **Logic**: Periodically scans the **Expense Splitter** for unpaid members.
+- **Trigger**: Automatically identifies "Forgotten Debts" older than 48 hours.
+- **Action**: Simulates high-priority WhatsApp notifications to group members to ensure timely settlement.
+
+### 3. 🔗 Zero-Input Magic Link API
+- **Endpoint**: High-performance `/api/magic-link` for external integrations.
+- **Workflow**: Allows third-party apps (Banks, Webhooks, SMS Parsers) to POST transactions directly into your ledger with instant AI classification.
+
+### 4. 🛡️ Security AI & Threat Monitoring
+- **Anomaly Detection**: Constant monitoring for "Spending Spikes" exceeding 2.5x your 3-month rolling average.
+- **Protection**: Automatically flags suspicious high-value outflows for manual verification.
+
+### 5. 📈 Wealth Optimization Engine
+- **Surplus Velocity**: Analyzes idle cash flow and current savings rate.
+- **Suggestions**: Generates specific portfolio allocations (e.g., "70% Small-cap Index, 30% Gold") based on current risk profile.
+
+### 6. 📉 Financial Health "Self-Healing"
+- **Burn Rate Intervention**: Detects if monthly burn rate exceeds 80% of income.
+- **Correction**: Automatically applies a 20% budget cap to non-essential categories to stabilize cash flow.
+
+### 7. ♻️ Budget Resilience (Auto-Reset)
+- **Drift Protection**: Automatically carries over budgets to the new month.
+- **Smart Adjustment**: Intelligently increases limits by 15% if high-confidence overspending (>110%) is detected, adjusting to your real-world needs.
+
+### 8. 📁 Monthly Archival Pipeline
+- **Auto-Archive**: Generates and saves a board-ready PDF Monthly Summary on the 1st of every month.
+- **State Clearing**: Resets local caches and prepares the next month's empty ledger vault.
+
+### 9. ⚖️ Tax Yield Sync
+- **Compliance**: Periodically checks for tax optimization opportunities under Section 80C/80D.
+- **Advice**: Triggers pulsing dashboard notifications when a high-impact tax-saving move is detected.
 
 ## 🛠 Tech Stack
 - **Framework:** Next.js 15 (App Router / Turbopack)
@@ -30,39 +63,9 @@ A premium, autonomous financial intelligence system & strategic wealth engine fo
 
 ## 🚀 Getting Started
 
-1. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-2. **Initialize Database:**
-   ```bash
-   npx prisma db push
-   ```
-
-3. **Run the development server:**
-   ```bash
-   npm run dev
-   ```
-
-4. **Internal API Usage:**
-   - **Magic Link Logging:** `POST /api/magic-link`
-   - **Body:** `{ "userId": 1, "description": "Starbucks Coffee", "amount": 450 }`
-
-## 💎 Features Included
-
-### 🧠 Financial Intelligence
-- **AI Spending Pattern Analysis**: Hyper-personalized insights based on financial behaviors.
-- **Cash Flow Prediction**: 3-month neural forecasts based on historic trends.
-- **Emergency Fund Tracker**: Automated goal tracking based on 6x overhead recommendation.
-- **Location-based Tracking**: Precise location logging for business travel. 
-- **Financial Milestone Tracker**: Gamification of savings achievements.
-
-### 🔒 Security & Persistence
-- **Prisma Database Integration**: Full persistence for Transactions, Goals, Splits, and Reports.
-- **End-to-End Encryption**: AES-256 for protected database fields.
-- **Rate Limiting**: Throttling for API security & MFA (Multi-Factor Auth) logic.
-- **Secure File Vault**: Encrypted binary storage for archived strategic reports.
+1. **Install dependencies:** `npm install`
+2. **Initialize Database:** `npx prisma db push`
+3. **Run the development server:** `npm run dev`
 
 ---
 *Built with ❤️ by the FinanceEdge AI Team.*
