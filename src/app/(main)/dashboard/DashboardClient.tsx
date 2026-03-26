@@ -82,8 +82,8 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
     const [pulseTime, setPulseTime] = useState<string>('');
 
     // Chart Refs for PDF export
-    const barChartRef = useRef<HTMLDivElement>(null);
-    const pieChartRef = useRef<HTMLDivElement>(null);
+    const barChartRef = useRef<HTMLDivElement | null>(null);
+    const pieChartRef = useRef<HTMLDivElement | null>(null);
 
     // Hydration check
     useEffect(() => {

@@ -1,10 +1,10 @@
 'use client';
 
+import React, { useState } from 'react';
 import { FileText, Download, Loader2, Sparkles, BrainCircuit, BarChart3 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import html2canvas from 'html2canvas';
-import { useState } from 'react';
 import { useToast } from './ToastProvider';
 
 interface AnalysisExportButtonProps {
@@ -14,7 +14,7 @@ interface AnalysisExportButtonProps {
     budgetData: any;
     riskData: any;
     optimizationResult?: any;
-    chartContainerRefs?: React.RefObject<HTMLDivElement>[];
+    chartContainerRefs?: React.RefObject<HTMLDivElement | null>[];
 }
 
 export default function AnalysisExportButton({ 
