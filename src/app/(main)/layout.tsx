@@ -1,5 +1,6 @@
 import Sidebar from "@/app/components/Sidebar";
 import BottomNav from "@/app/components/BottomNav";
+import PageTransition from "@/app/components/PageTransition";
 
 export default function MainLayout({
     children,
@@ -10,7 +11,9 @@ export default function MainLayout({
         <div className="dashboard-layout">
             <Sidebar />
             <main className="main-content">
-                {children}
+                <PageTransition>
+                    {children}
+                </PageTransition>
             </main>
             <BottomNav />
         </div>

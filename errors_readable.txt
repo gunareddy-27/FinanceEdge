@@ -1,0 +1,123 @@
+﻿[96msrc/app/(main)/dashboard/DashboardClient.tsx[0m:[93m202[0m:[93m28[0m - [91merror[0m[90m TS2322: [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m202[0m             <motion.header variants={item} style={{
+[7m   [0m [91m                           ~~~~~~~~[0m
+
+  [96mnode_modules/motion-dom/dist/index.d.ts[0m:[93m290[0m:[93m5[0m
+    [7m290[0m     variants?: Variants;
+    [7m   [0m [96m    ~~~~~~~~[0m
+    The expected type comes from property 'variants' which is declared here on type 'IntrinsicAttributes & Omit<HTMLMotionProps<"header">, "ref"> & RefAttributes<HTMLElement>'
+
+[96msrc/app/(main)/dashboard/DashboardClient.tsx[0m:[93m268[0m:[93m25[0m - [91merror[0m[90m TS2322: [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m268[0m             <motion.div variants={item} style={{ marginBottom: '3rem' }}>
+[7m   [0m [91m                        ~~~~~~~~[0m
+
+  [96mnode_modules/motion-dom/dist/index.d.ts[0m:[93m290[0m:[93m5[0m
+    [7m290[0m     variants?: Variants;
+    [7m   [0m [96m    ~~~~~~~~[0m
+    The expected type comes from property 'variants' which is declared here on type 'IntrinsicAttributes & Omit<HTMLMotionProps<"div">, "ref"> & RefAttributes<HTMLDivElement>'
+
+[96msrc/app/(main)/dashboard/DashboardClient.tsx[0m:[93m272[0m:[93m25[0m - [91merror[0m[90m TS2322: [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m272[0m             <motion.div variants={item} style={{ marginBottom: '3rem' }}>
+[7m   [0m [91m                        ~~~~~~~~[0m
+
+  [96mnode_modules/motion-dom/dist/index.d.ts[0m:[93m290[0m:[93m5[0m
+    [7m290[0m     variants?: Variants;
+    [7m   [0m [96m    ~~~~~~~~[0m
+    The expected type comes from property 'variants' which is declared here on type 'IntrinsicAttributes & Omit<HTMLMotionProps<"div">, "ref"> & RefAttributes<HTMLDivElement>'
+
+[96msrc/app/(main)/dashboard/DashboardClient.tsx[0m:[93m278[0m:[93m17[0m - [91merror[0m[90m TS2322: [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m278[0m                 variants={item}
+[7m   [0m [91m                ~~~~~~~~[0m
+
+  [96mnode_modules/motion-dom/dist/index.d.ts[0m:[93m290[0m:[93m5[0m
+    [7m290[0m     variants?: Variants;
+    [7m   [0m [96m    ~~~~~~~~[0m
+    The expected type comes from property 'variants' which is declared here on type 'IntrinsicAttributes & Omit<HTMLMotionProps<"div">, "ref"> & RefAttributes<HTMLDivElement>'
+
+[96msrc/app/(main)/dashboard/DashboardClient.tsx[0m:[93m326[0m:[93m29[0m - [91merror[0m[90m TS2322: [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m326[0m                 <motion.div variants={item} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
+[7m   [0m [91m                            ~~~~~~~~[0m
+
+  [96mnode_modules/motion-dom/dist/index.d.ts[0m:[93m290[0m:[93m5[0m
+    [7m290[0m     variants?: Variants;
+    [7m   [0m [96m    ~~~~~~~~[0m
+    The expected type comes from property 'variants' which is declared here on type 'IntrinsicAttributes & Omit<HTMLMotionProps<"div">, "ref"> & RefAttributes<HTMLDivElement>'
+
+[96msrc/app/(main)/dashboard/DashboardClient.tsx[0m:[93m361[0m:[93m25[0m - [91merror[0m[90m TS2322: [0mType '{ hidden: { opacity: number; y: number; }; show: { opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }; }' is not assignable to type 'Variants'.
+  Property 'show' is incompatible with index signature.
+    Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'Variant'.
+      Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ opacity: number; y: number; transition: { type: string; stiffness: number; damping: number; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues$1 | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ type: string; stiffness: number; damping: number; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'type' are incompatible.
+                    Type 'string' is not assignable to type 'AnimationGeneratorType | undefined'.
+
+[7m361[0m             <motion.div variants={item} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '2rem', alignItems: 'start' }}>
+[7m   [0m [91m                        ~~~~~~~~[0m
+
+  [96mnode_modules/motion-dom/dist/index.d.ts[0m:[93m290[0m:[93m5[0m
+    [7m290[0m     variants?: Variants;
+    [7m   [0m [96m    ~~~~~~~~[0m
+    The expected type comes from property 'variants' which is declared here on type 'IntrinsicAttributes & Omit<HTMLMotionProps<"div">, "ref"> & RefAttributes<HTMLDivElement>'
+
+
+Found 6 errors in the same file, starting at: src/app/(main)/dashboard/DashboardClient.tsx[90m:202[0m
+

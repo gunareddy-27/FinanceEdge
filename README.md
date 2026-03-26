@@ -12,6 +12,13 @@ A premium Full Stack Personal Finance & Tax Estimator for Freelancers.
 
 ## 🚀 Newly Added Features
 
+### 📊 Strategic AI Intelligence Reports
+- **Autonomous Strategy Audits**: Generate premium, board-ready PDF reports with behavioral profiling and strategic financial advice.
+- **Dynamic Recommendations Engine**: Personalized logic-driven advice for liquidity management, risk mitigation, and tax efficiency.
+- **Neural Network Forecasting**: Integration of LSTM and Prophet-inspired models for high-confidence 30-day expense outlooks.
+- **Visual Data Audit**: Automated inclusion of dashboard charts in exports for comprehensive asset analysis.
+- **Premium PDF UI**: Dark-mode themed report designs with rounded cards and decorative audit elements.
+
 ### 📱 Mobile-First Experience & PWA
 - **PWA Ready**: Install TaxPal directly on your Android/iOS home screen.
 - **Responsive Navigation**: Mobile-optimized bottom navigation and hidden sidebar for small viewports.

@@ -1,6 +1,6 @@
 'use client';
 
-import { Lightbulb, TrendingDown, Target, Zap, ArrowRight, Wallet2 } from 'lucide-react';
+import { Lightbulb, TrendingDown, Target, Zap, ArrowRight, Wallet2, AlertCircle } from 'lucide-react';
 
 interface Insight {
     id: number;
@@ -99,6 +99,4 @@ export default function InsightFeed({ income, expenses }: { income: number, expe
     );
 }
 
-function AlertCircle({ size, color }: { size: number, color: string }) {
-    return <Lightbulb size={size} color={color} />; // fallback
-}
+

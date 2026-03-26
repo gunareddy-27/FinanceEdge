@@ -1,10 +1,11 @@
 'use client';
 
-import { FileText, Download, Loader2 } from 'lucide-react';
+import { FileText, Download, Loader2, Table } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { useState } from 'react';
 import { logReport } from '@/app/actions/report';
+import { useToast } from './ToastProvider';
 
 interface Transaction {
     id: number;
@@ -21,6 +22,7 @@ interface ExportReportButtonProps {
 }
 
 export default function ExportReportButton({ transactions, summary }: ExportReportButtonProps) {
+    const { showToast } = useToast();
     const [generating, setGenerating] = useState(false);
 
     const generatePDF = async () => {
@@ -29,7 +31,6 @@ export default function ExportReportButton({ transactions, summary }: ExportRepo
             const doc = new jsPDF();
             const pageWidth = doc.internal.pageSize.getWidth();
 
-            // 1. Header
             doc.setFontSize(22);
             doc.setTextColor(99, 102, 241); // Primary Color
             doc.text("TaxPal Financial Report", 14, 22);
@@ -37,15 +38,11 @@ export default function ExportReportButton({ transactions, summary }: ExportRepo
             doc.setFontSize(11);
             doc.setTextColor(100);
             doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 30);
-
-            // Draw a line
-            doc.setDrawColor(200);
             doc.line(14, 35, pageWidth - 14, 35);
 
-            // 2. Summary Section
             doc.setFontSize(16);
             doc.setTextColor(0);
-            doc.text("Financial Summary", 14, 48);
+            doc.text("Financial Summary (INR)", 14, 48);
 
             const netIncome = summary.income - summary.expenses;
 
@@ -59,18 +56,13 @@ export default function ExportReportButton({ transactions, summary }: ExportRepo
                     ['Estimated Tax (25%)', `₹${(summary.income * 0.25).toLocaleString()}`]
                 ],
                 theme: 'grid',
-                headStyles: { fillColor: [99, 102, 241] },
-                styles: { fontSize: 12, cellPadding: 6 },
-                columnStyles: { 0: { fontStyle: 'bold' } }
+                headStyles: { fillColor: [99, 102, 241] }
             });
 
-            // Get Y position after first table safely
             const finalY = (doc as any).lastAutoTable?.finalY || 100;
 
-            // 3. Transactions Table
             if (transactions && transactions.length > 0) {
                 doc.text("Transaction History", 14, finalY + 15);
-
                 const tableData = transactions.map(t => [
                     new Date(t.date).toLocaleDateString(),
                     t.description || 'No description',
@@ -84,58 +76,81 @@ export default function ExportReportButton({ transactions, summary }: ExportRepo
                     head: [['Date', 'Description', 'Category', 'Type', 'Amount']],
                     body: tableData,
                     theme: 'striped',
-                    headStyles: { fillColor: [75, 85, 99] },
-                    styles: { fontSize: 10 },
-                    alternateRowStyles: { fillColor: [245, 247, 250] }
+                    headStyles: { fillColor: [75, 85, 99] }
                 });
-            } else {
-                doc.setFontSize(12);
-                doc.setTextColor(150);
-                doc.text("No transactions found for this period.", 14, finalY + 15);
             }
 
-            // Footer
-            const pageCount = (doc as any).internal.getNumberOfPages();
-            for (let i = 1; i <= pageCount; i++) {
-                doc.setPage(i);
-                doc.setFontSize(10);
-                doc.setTextColor(150);
-                doc.text('TaxPal - Your Smart Financial Assistant', 14, doc.internal.pageSize.getHeight() - 10);
-                doc.text(`Page ${i} of ${pageCount}`, pageWidth - 25, doc.internal.pageSize.getHeight() - 10);
-            }
-
-            const fileName = `taxpal_report_${new Date().toISOString().slice(0, 10)}.pdf`;
-            doc.save(fileName);
-
-            // Log report generation to backend
+            doc.save(`taxpal_report_${new Date().toISOString().slice(0, 10)}.pdf`);
             await logReport(new Date().toISOString().slice(0, 7), "Custom PDF Export");
-
+            showToast("PDF Report downloaded successfully", "success");
         } catch (error) {
-            console.error("PDF Generation Error:", error);
-            alert("Failed to generate report. Please try again.");
+            showToast("Failed to generate PDF.", "error");
+        } finally {
+            setGenerating(false);
+        }
+    };
+
+    const generateExcel = async () => {
+        if (transactions.length === 0) {
+            showToast("No transactions to export.", "error");
+            return;
+        }
+
+        setGenerating(true);
+        try {
+            // Create CSV content (Excel compatible)
+            const headers = ["Date", "Description", "Category", "Type", "Amount (INR)"];
+            const rows = transactions.map(t => [
+                new Date(t.date).toLocaleDateString(),
+                `"${t.description || ''}"`,
+                `"${t.category || ''}"`,
+                t.type.toUpperCase(),
+                t.amount
+            ]);
+
+            const csvContent = [
+                headers.join(","),
+                ...rows.map(r => r.join(","))
+            ].join("\n");
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `taxpal_ledger_${new Date().toISOString().slice(0, 10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showToast("Excel Ledger (CSV) downloaded successfully", "success");
+            await logReport(new Date().toISOString().slice(0, 7), "Excel Export");
+        } catch (error) {
+            showToast("Failed to generate Excel file.", "error");
         } finally {
             setGenerating(false);
         }
     };
 
     return (
-        <button
-            onClick={generatePDF}
-            className="btn btn-secondary"
-            disabled={generating}
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: '160px', justifyContent: 'center' }}
-        >
-            {generating ? (
-                <>
-                    <Loader2 size={16} className="animate-spin" />
-                    Generating...
-                </>
-            ) : (
-                <>
-                    <Download size={16} />
-                    Export Report (PDF)
-                </>
-            )}
-        </button>
+        <div style={{ display: 'flex', gap: '0.75rem' }}>
+            <button
+                onClick={generatePDF}
+                className="btn btn-secondary"
+                disabled={generating}
+                style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: '160px', borderRadius: '14px' }}
+            >
+                {generating ? <Loader2 size={16} className="animate-spin" /> : <FileText size={16} />}
+                Export PDF
+            </button>
+            <button
+                onClick={generateExcel}
+                className="btn btn-primary"
+                disabled={generating}
+                style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: '160px', borderRadius: '14px' }}
+            >
+                {generating ? <Loader2 size={16} className="animate-spin" /> : <Table size={16} />}
+                Get Excel (.csv)
+            </button>
+        </div>
     );
 }

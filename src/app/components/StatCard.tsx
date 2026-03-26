@@ -1,6 +1,7 @@
 'use client';
 
-import { LucideIcon, ArrowUpRight, ArrowDownRight, Minus } from 'lucide-react';
+import { LucideIcon, ArrowUpRight, ArrowDownRight, Minus, Sparkles } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface StatCardProps {
     title: string;
@@ -16,67 +17,101 @@ interface StatCardProps {
 }
 
 const themeColors = {
-    primary: { bg: '#E0E7FF', text: 'var(--primary)' }, // Indigo 100 on 500
-    danger: { bg: '#FEE2E2', text: 'var(--danger-text)' }, // Red 100 on Red 700
-    warning: { bg: '#FEF3C7', text: '#D97706' }, // Amber 100 on Amber 600
-    success: { bg: '#D1FAE5', text: 'var(--success-text)' }, // Emerald 100 on Emerald 700
-    info: { bg: '#E0F2FE', text: '#0284C7' }, // Sky 100 on Sky 600
+    primary: { bg: '#E0E7FF', text: 'var(--primary)', accent: 'var(--primary-light)' },
+    danger: { bg: '#FEE2E2', text: 'var(--danger-text)', accent: '#fecaca' },
+    warning: { bg: '#FEF3C7', text: '#D97706', accent: '#fde68a' },
+    success: { bg: '#D1FAE5', text: 'var(--success-text)', accent: '#a7f3d0' },
+    info: { bg: '#E0F2FE', text: '#0284C7', accent: '#bae6fd' },
 };
 
 export default function StatCard({ title, value, icon: Icon, trend, subtext, colorTheme = 'primary' }: StatCardProps) {
     const theme = themeColors[colorTheme];
 
     return (
-        <div className="card stat-card" style={{ transition: 'transform 0.2s, box-shadow 0.2s' }}>
-            <div className="flex-between" style={{ marginBottom: '1rem' }}>
-                <span className="text-muted text-sm font-medium">{title}</span>
-                <div
+        <motion.div 
+            whileHover={{ y: -5, boxShadow: 'var(--shadow-xl)', borderColor: theme.text }}
+            whileTap={{ scale: 0.98 }}
+            className="card stat-card" 
+            style={{ 
+                position: 'relative', 
+                overflow: 'hidden', 
+                border: '1px solid var(--border)',
+                cursor: 'pointer'
+            }}
+        >
+            {/* 4. Smart Highlighting UI (Subtle pulse on danger) */}
+            {colorTheme === 'danger' && (
+                <motion.div 
+                    animate={{ opacity: [0, 0.2, 0] }}
+                    transition={{ repeat: Infinity, duration: 2 }}
+                    style={{ position: 'absolute', inset: 0, background: 'var(--danger-bg)', pointerEvents: 'none' }}
+                />
+            )}
+
+            <div className="flex-between" style={{ marginBottom: '1.25rem' }}>
+                <span className="text-muted text-xs font-bold uppercase tracking-widest">{title}</span>
+                <motion.div
+                    whileHover={{ rotate: 15, scale: 1.1 }}
                     style={{
                         padding: 10,
                         background: theme.bg,
-                        borderRadius: 'var(--radius-sm)',
+                        borderRadius: '14px',
                         color: theme.text,
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center'
+                        justifyContent: 'center',
+                        boxShadow: `0 4px 10px ${theme.accent}`
                     }}
                 >
-                    <Icon size={20} />
-                </div>
+                    <Icon size={18} />
+                </motion.div>
             </div>
 
-            <div className="text-2xl" style={{ fontWeight: 700, marginBottom: '0.5rem' }}>
-                {value}
+            <div style={{ position: 'relative' }}>
+                <AnimatePresence mode="popLayout">
+                    <motion.div 
+                        key={String(value)}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="text-3xl" 
+                        style={{ fontWeight: 800, marginBottom: '0.75rem', letterSpacing: '-0.02em', color: 'var(--text-main)' }}
+                    >
+                        {value}
+                    </motion.div>
+                </AnimatePresence>
             </div>
 
             {trend ? (
-                <div className="flex items-center" style={{ gap: '0.25rem', display: 'flex', fontSize: '0.875rem' }}>
-                    <span
+                <div className="flex items-center" style={{ gap: '0.5rem', display: 'flex', fontSize: '0.8rem' }}>
+                    <div
                         style={{
                             display: 'flex',
                             alignItems: 'center',
-                            color: trend.direction === 'up' ? 'var(--success-text)' : trend.direction === 'down' ? 'var(--danger-text)' : 'var(--text-muted)',
-                            fontWeight: 500,
-                            gap: 2
+                            padding: '4px 8px',
+                            borderRadius: '20px',
+                            background: trend.direction === 'up' ? '#d1fae5' : trend.direction === 'down' ? '#fee2e2' : '#f1f5f9',
+                            color: trend.direction === 'up' ? '#065f46' : trend.direction === 'down' ? '#991b1b' : '#64748b',
+                            fontWeight: 700,
+                            gap: 4
                         }}
                     >
-                        {trend.direction === 'up' && <ArrowUpRight size={16} />}
-                        {trend.direction === 'down' && <ArrowDownRight size={16} />}
-                        {trend.direction === 'neutral' && <Minus size={16} />}
+                        {trend.direction === 'up' && <ArrowUpRight size={14} />}
+                        {trend.direction === 'down' && <ArrowDownRight size={14} />}
+                        {trend.direction === 'neutral' && <Minus size={14} />}
                         {trend.value}
-                    </span>
-                    {trend.label && <span className="text-muted" style={{ marginLeft: 4 }}>{trend.label}</span>}
+                    </div>
+                    {trend.label && <span className="text-muted" style={{ fontWeight: 500 }}>{trend.label}</span>}
                 </div>
             ) : subtext ? (
-                <div className="text-muted text-sm">{subtext}</div>
-            ) : null}
-
-            <style jsx>{`
-                .stat-card:hover {
-                    transform: translateY(-2px);
-                    box-shadow: var(--shadow-md);
-                }
-            `}</style>
-        </div>
+                <div className="text-muted text-xs font-medium flex items-center gap-1">
+                    <Sparkles size={12} className="text-primary" /> {subtext}
+                </div>
+            ) : (
+                 <div className="text-muted text-xs font-medium flex items-center gap-1">
+                    <Sparkles size={12} style={{ opacity: 0.4 }} /> Intelligent tracking
+                </div>
+            )}
+        </motion.div>
     );
 }
