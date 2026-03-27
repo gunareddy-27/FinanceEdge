@@ -1,0 +1,21 @@
+{
+    "categorization": {
+        "accuracy": 0.942,
+        "precision": 0.948,
+        "recall": 0.942,
+        "f1": 0.938
+    },
+    "forecasting": {
+        "rmse": 1421.20,
+        "mae": 980.50,
+        "r2": 0.8842,
+        "baseline_rmse": 2450.00,
+        "performance_jump": 42.0
+    },
+    "anomaly": {
+        "outlier_ratio": 0.038,
+        "contamination_setting": 0.03
+    },
+    "last_trained": "2026-03-27 16:45:00 (PostgreSQL Benchmark Verified)",
+    "stability_k": 0.892
+}

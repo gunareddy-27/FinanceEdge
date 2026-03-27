@@ -62,14 +62,34 @@ const item = {
     show: { opacity: 1, y: 0 }
 } as const;
 
+import ResearchSection from './ResearchSection';
+import { useEffect } from 'react';
+
+// ... (existing helper functions if any, but AILabClient already imports what it needs)
+
 export default function AILabClient({ behaviorData, predictionData, anomaliesData, budgetData, investmentData, riskData }: AILabClientProps) {
     const [isAutopilot, setIsAutopilot] = useState(false);
-    const [simulationExpense, setSimulationExpense] = useState(80000); // Default iPhone price
+    const [simulationExpense, setSimulationExpense] = useState(80000); 
     const [simResult, setSimResult] = useState<any>(null);
     const [isSimulating, startSimulating] = useTransition();
     const [isOptimizing, startOptimizing] = useTransition();
     const [optimizationResult, setOptimizationResult] = useState<any>(null);
-    const [activeTab, setActiveTab] = useState<'insights' | 'optimizer' | 'goals'>('insights');
+    const [activeTab, setActiveTab] = useState<'insights' | 'optimizer' | 'goals' | 'research'>('insights');
+    const [mlMetrics, setMlMetrics] = useState<any>(null);
+
+    // Fetch live metrics on load
+    useEffect(() => {
+        const fetchMetrics = async () => {
+            try {
+                const res = await fetch('/api/ml-metrics');
+                const data = await res.json();
+                setMlMetrics(data);
+            } catch (e) {
+                console.error("Failed to load metrics", e);
+            }
+        };
+        fetchMetrics();
+    }, []);
 
     // Refs for PDF inclusion
     const forecastCardRef = useRef<HTMLDivElement>(null);
@@ -155,7 +175,7 @@ export default function AILabClient({ behaviorData, predictionData, anomaliesDat
                     className={`btn ${activeTab === 'insights' ? 'btn-primary' : 'btn-secondary'}`}
                     style={{ borderRadius: '20px' }}
                 >
-                    <Layers size={18} /> Research Insights
+                    <Layers size={18} /> Lab Insights
                 </button>
                 <button 
                     onClick={() => setActiveTab('optimizer')}
@@ -170,6 +190,13 @@ export default function AILabClient({ behaviorData, predictionData, anomaliesDat
                     style={{ borderRadius: '20px' }}
                 >
                     <Target size={18} /> Goal Simulation
+                </button>
+                <button 
+                    onClick={() => setActiveTab('research')}
+                    className={`btn ${activeTab === 'research' ? 'bg-indigo-600 text-white' : 'btn-secondary'}`}
+                    style={{ borderRadius: '20px' }}
+                >
+                    <GraduationCap size={18} /> Research & Ethics
                 </button>
             </motion.div>
 
@@ -428,6 +455,16 @@ export default function AILabClient({ behaviorData, predictionData, anomaliesDat
                                 </div>
                              </div>
                         </div>
+                    </motion.div>
+                )}
+                {activeTab === 'research' && (
+                    <motion.div 
+                        key="research"
+                        initial={{ opacity: 0, scale: 0.98 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.98 }}
+                    >
+                        <ResearchSection metrics={mlMetrics} />
                     </motion.div>
                 )}
             </AnimatePresence>

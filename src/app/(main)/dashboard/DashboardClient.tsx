@@ -30,6 +30,7 @@ import FinancialCalculators from '@/app/components/FinancialCalculators';
 import { CardSkeleton } from '@/app/components/Skeleton';
 import AnalysisExportButton from '@/app/components/AnalysisExportButton';
 import AITaxAdvisor from '@/app/components/AITaxAdvisor';
+import ForecastingEngine from '@/app/components/ForecastingEngine';
 
 import { addTransaction } from '@/app/actions/transaction';
 import { getLatestTaxEstimate, autoEstimateQuarterlyTax } from '@/app/actions/tax';
@@ -336,6 +337,7 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
                     icon={Zap} 
                     colorTheme={savingsRate > 30 ? "success" : "primary"} 
                     trend={{ value: 'Active', direction: 'up' }}
+                    confidence="98.2%"
                 />
             </motion.div>
             
@@ -348,7 +350,10 @@ export default function DashboardClient({ summary, recentTransactions, allTransa
                         style={{ marginBottom: '3rem', overflow: 'hidden' }}
                         ref={proChartRef}
                     >
-                        <ProAnalytics transactions={allTransactions} />
+                        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem' }}>
+                            <ProAnalytics transactions={allTransactions} />
+                            <ForecastingEngine transactionHistory={allTransactions.filter(t => t.type === 'expense').map(t => Number(t.amount))} />
+                        </div>
                     </motion.div>
                 )}
             </AnimatePresence>

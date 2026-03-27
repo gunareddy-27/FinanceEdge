@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -38,6 +38,9 @@ model Transaction {
   amount    Decimal
   date      DateTime
   description String?
+  metadata    Json?    // For ML Confidence scores, raw descriptions, etc.
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
   voiceNotes  String?  @map("voice_notes")
   attachmentUrl String?  @map("attachment_url")
   fromDest    String?  @map("from_dest")

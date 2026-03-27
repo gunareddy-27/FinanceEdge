@@ -14,6 +14,7 @@ interface StatCardProps {
     };
     subtext?: string;
     colorTheme?: 'primary' | 'danger' | 'warning' | 'success' | 'info';
+    confidence?: string;
 }
 
 const themeColors = {
@@ -24,7 +25,7 @@ const themeColors = {
     info: { bg: '#E0F2FE', text: '#0284C7', accent: '#bae6fd' },
 };
 
-export default function StatCard({ title, value, icon: Icon, trend, subtext, colorTheme = 'primary' }: StatCardProps) {
+export default function StatCard({ title, value, icon: Icon, trend, subtext, colorTheme = 'primary', confidence }: StatCardProps) {
     const theme = themeColors[colorTheme];
 
     return (
@@ -49,7 +50,27 @@ export default function StatCard({ title, value, icon: Icon, trend, subtext, col
             )}
 
             <div className="flex-between" style={{ marginBottom: '1.25rem' }}>
-                <span className="text-muted text-xs font-bold uppercase tracking-widest">{title}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span className="text-muted text-xs font-bold uppercase tracking-widest">{title}</span>
+                    {confidence && (
+                        <motion.div 
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            style={{ 
+                                padding: '2px 6px', 
+                                background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)', 
+                                color: 'white', 
+                                borderRadius: '6px', 
+                                fontSize: '9px', 
+                                fontWeight: 900,
+                                letterSpacing: '0.05em',
+                                boxShadow: '0 0 10px rgba(79, 70, 229, 0.4)'
+                            }}
+                        >
+                            AI {confidence}
+                        </motion.div>
+                    )}
+                </div>
                 <motion.div
                     whileHover={{ rotate: 15, scale: 1.1 }}
                     style={{
