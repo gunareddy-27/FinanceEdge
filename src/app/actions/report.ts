@@ -93,3 +93,42 @@ export async function autoArchiveMonthReport() {
 
     return { archived: false };
 }
+
+export async function getReportPreviewData(type: string, period: string) {
+    const userId = await getUserId();
+    const now = new Date();
+    let startDate = new Date();
+
+    if (period === 'Current Month') {
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+    } else if (period === 'Last Quarter') {
+        startDate = new Date(now.getFullYear(), now.getMonth() - 3, 1);
+    } else if (period === 'Last Year') {
+        startDate = new Date(now.getFullYear() - 1, 0, 1);
+    } else if (period.includes(' ')) {
+        // Handle archived month names like "March 2026"
+        const [month, year] = period.split(' ');
+        startDate = new Date(`${month} 1, ${year}`);
+    }
+
+    const transactions = await prisma.transaction.findMany({
+        where: {
+            userId,
+            date: { gte: startDate }
+        },
+        orderBy: { date: 'desc' }
+    });
+
+    return {
+        type,
+        period,
+        generatedAt: now,
+        transactions: transactions.map(t => ({
+            date: t.date,
+            description: t.description,
+            category: t.category,
+            type: t.type,
+            amount: Number(t.amount)
+        }))
+    };
+}

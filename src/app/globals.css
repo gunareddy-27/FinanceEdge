@@ -615,3 +615,50 @@ h6 {
   color: var(--primary);
   font-weight: 500;
 }
+
+@media print {
+  .sidebar, 
+  .bottom-nav, 
+  .no-print, 
+  .btn, 
+  header.flex-between,
+  .dashboard-layout > .sidebar {
+    display: none !important;
+  }
+
+  .main-content {
+    margin-left: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+  }
+
+  .modal-overlay {
+    background: white !important;
+    position: static !important;
+    padding: 0 !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  .modal {
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+    transform: none !important;
+  }
+
+  body {
+    background: white !important;
+  }
+
+  .print-section {
+    display: block !important;
+  }
+
+  .card {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+}

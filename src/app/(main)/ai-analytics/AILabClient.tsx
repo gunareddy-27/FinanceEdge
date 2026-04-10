@@ -4,7 +4,7 @@ import { useState, useTransition, useRef } from 'react';
 import { 
     BrainCircuit, LineChart, AlertTriangle, ShieldCheck, PieChart, 
     TrendingUp, Cpu, Settings, Play, CheckCircle, Info, Sparkles, 
-    ArrowRight, Smartphone, Target, ShieldAlert, Zap, Layers 
+    ArrowRight, Smartphone, Target, ShieldAlert, Zap, Layers, GraduationCap
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
